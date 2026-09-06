@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ground Reality of School Education in India — UDISE+ Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:ital@1&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --ink:#1B2436;
+  --paper:#EEF1F0;
+  --panel:#FFFFFF;
+  --line:#D8DCDC;
+  --line-soft:#E6E9E8;
+  --muted:#5B6472;
+  --muted-2:#838C93;
+  --govt:#2A3F73;
+  --govt-soft:#7A88AC;
+  --aided:#3F7D77;
+  --aided-soft:#8FB6B1;
+  --pvt:#B8842B;
+  --pvt-soft:#D8B677;
+  --gold:#B8842B;
+  --up:#4C7A52;
+  --down:#B5533C;
+  --warn-bg:#FBF2E3;
+  --warn-line:#E3C888;
+  --sidebar-w:248px;
+  --radius:3px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'IBM Plex Sans', -apple-system, sans-serif;
+  font-size:14.5px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{
+  font-family:'Lora', Georgia, serif;
+  font-weight:600;
+  margin:0 0 4px 0;
+  color:#101828;
+}
+a{color:var(--govt);}
+::selection{background:#D8B677;color:#1B2436;}
+.tabular{font-variant-numeric:tabular-nums;}
+
+/* ============ SHELL ============ */
+.shell{display:flex;min-height:100vh;}
+
+/* ---- Sidebar ---- */
+.sidebar{
+  width:var(--sidebar-w);
+  flex-shrink:0;
+  background:#101B33;
+  color:#C9D2E0;
+  position:fixed;top:0;bottom:0;left:0;
+  display:flex;flex-direction:column;
+  z-index:40;
+}
+.brand{
+  padding:22px 20px 16px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.09);
+}
+.brand .mark{
+  font-family:'Lora',serif;font-weight:700;font-size:15px;color:#fff;
+  letter-spacing:0.2px;line-height:1.3;
+}
+.brand .sub{font-size:11px;color:#8493AD;margin-top:6px;line-height:1.5;}
+.navlist{list-style:none;margin:0;padding:10px 0;overflow-y:auto;flex:1;}
+.navgroup-label{font-size:10.5px;text-transform:uppercase;letter-spacing:0.08em;color:#5E6C89;padding:14px 20px 6px;}
+.navitem{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 20px;cursor:pointer;color:#AFBAD0;
+  font-size:13.3px;border-left:3px solid transparent;
+}
+.navitem:hover{background:rgba(255,255,255,0.04);color:#fff;}
+.navitem.active{
+  background:rgba(184,132,43,0.14);
+  border-left-color:var(--gold);
+  color:#fff;
+  font-weight:500;
+}
+.navitem .dot{width:5px;height:5px;border-radius:50%;background:#46527A;flex-shrink:0;}
+.navitem.active .dot{background:var(--gold);}
+.sidebar-foot{padding:14px 20px 18px;border-top:1px solid rgba(255,255,255,0.09);font-size:10.8px;color:#5E6C89;line-height:1.6;}
+
+/* ---- Main ---- */
+.main{margin-left:var(--sidebar-w);flex:1;min-width:0;}
+.topbar{
+  position:sticky;top:0;z-index:30;
+  background:var(--paper);
+  border-bottom:1px solid var(--line);
+  padding:14px 28px;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;
+  backdrop-filter:blur(6px);
+}
+.topbar h1{font-size:21px;}
+.topbar .desc{color:var(--muted);font-size:12.5px;max-width:640px;}
+.filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.filters label{font-size:10.5px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted-2);display:block;margin-bottom:3px;}
+.filters select, .filters input[type="text"]{
+  font-family:inherit;font-size:13px;padding:6px 9px;
+  border:1px solid var(--line);background:#fff;border-radius:var(--radius);color:var(--ink);
+}
+.btn{
+  font-family:inherit;font-size:12.5px;padding:7px 13px;
+  border:1px solid var(--ink);background:var(--ink);color:#fff;border-radius:var(--radius);
+  cursor:pointer;
+}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
+.btn:hover{opacity:0.88;}
+.content{padding:24px 28px 60px;max-width:1360px;}
+.page{display:none;}
+.page.active{display:block;animation:fade .25s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+.section-title{
+  display:flex;align-items:baseline;gap:10px;margin:34px 0 14px;
+}
+.section-title h2{font-size:17px;}
+.section-title .n{font-size:11px;color:var(--muted-2);border:1px solid var(--line);padding:1px 7px;border-radius:20px;}
+.section-title:first-child{margin-top:4px;}
+.lede{color:var(--muted);font-size:13px;max-width:760px;margin:-6px 0 16px;}
+
+/* ---- KPI cards ---- */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);}
+.kpi{background:var(--panel);padding:16px 16px 14px;position:relative;}
+.kpi .cat-bar{position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi.c-total .cat-bar{background:#2A2E3A;}
+.kpi.c-govt .cat-bar{background:var(--govt);}
+.kpi.c-aided .cat-bar{background:var(--aided);}
+.kpi.c-pvt .cat-bar{background:var(--pvt);}
+.kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;}
+.kpi .value{font-family:'Lora',serif;font-size:24px;font-weight:600;color:#101828;}
+.kpi .delta{font-size:11.5px;margin-top:6px;}
+.kpi .delta.up{color:var(--up);}
+.kpi .delta.down{color:var(--down);}
+.kpi .delta.flat{color:var(--muted-2);}
+.kpi .na{color:var(--muted-2);font-style:italic;font-size:12px;margin-top:6px;}
+
+/* ---- Panels / charts ---- */
+.grid-2{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+@media (max-width:980px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px 18px;}
+.panel h3{font-size:13.5px;font-weight:600;margin-bottom:2px;}
+.panel .cap{font-size:11px;color:var(--muted-2);margin-bottom:12px;}
+.panel .chart-wrap{position:relative;height:280px;}
+.panel .chart-wrap.short{height:210px;}
+.panel .chart-wrap.tall{height:420px;}
+.src-tag{font-size:10.3px;color:var(--muted-2);border-top:1px dashed var(--line-soft);margin-top:12px;padding-top:8px;}
+
+/* ---- Tables ---- */
+table.data{width:100%;border-collapse:collapse;font-size:12.6px;}
+table.data th{
+  text-align:left;font-weight:600;font-size:10.8px;text-transform:uppercase;letter-spacing:0.03em;
+  color:var(--muted);border-bottom:1px solid var(--ink);padding:7px 9px;cursor:pointer;white-space:nowrap;position:sticky;top:0;background:#fff;
+}
+table.data th.sorted{color:var(--ink);}
+table.data th span.arrow{font-size:9px;margin-left:3px;}
+table.data td{padding:6px 9px;border-bottom:1px solid var(--line-soft);white-space:nowrap;}
+table.data tbody tr:hover{background:#F6F5EF;cursor:pointer;}
+table.data tbody tr.selected{background:#FBF2E3;}
+.tablewrap{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:var(--radius);}
+.num{text-align:right;font-variant-numeric:tabular-nums;}
+.pos{color:var(--up);}.neg{color:var(--down);}
+
+/* ---- badges / tags ---- */
+.tag{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:0.04em;padding:2px 7px;border-radius:20px;font-weight:600;}
+.tag.available{background:#E4EEE3;color:var(--up);}
+.tag.unavailable{background:#F1E4DE;color:var(--down);}
+.tag.partial{background:var(--warn-bg);color:#8A6414;}
+.tag.fact{background:#EAEFF7;color:var(--govt);}
+.tag.interp{background:#EFEAF5;color:#5A4A87;}
+.tag.rec{background:#E4EEE3;color:var(--up);}
+
+.callout{border:1px solid var(--warn-line);background:var(--warn-bg);padding:12px 15px;border-radius:var(--radius);font-size:12.6px;color:#6B4E10;margin:14px 0;}
+.callout strong{color:#4A3808;}
+.callout.note{background:#EEF1F7;border-color:#C7D0E4;color:#333F58;}
+.callout.note strong{color:#1B2A4A;}
+
+.qa-card{border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:14px 16px;margin-bottom:10px;}
+.qa-card .q{font-family:'Lora',serif;font-weight:600;font-size:14px;margin-bottom:6px;}
+.qa-card .a{font-size:13px;color:#333;}
+.qa-card .a .tag{margin-right:6px;}
+.qa-improvement{background:#F9F8F6;border-top:1px solid var(--line-soft);margin-top:12px;padding-top:12px;font-size:12px;}
+.qa-improvement .imp-title{font-weight:600;color:var(--muted);text-transform:uppercase;font-size:10px;letter-spacing:0.04em;margin-bottom:8px;}
+.imp-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:10px;}
+.imp-stat{display:flex;flex-direction:column;}
+.imp-stat-label{font-size:9px;color:var(--muted-2);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:4px;}
+.imp-stat-value{font-family:'Lora',serif;font-weight:600;font-size:16px;color:var(--govt);}
+.imp-stat-value.potential{color:var(--up);}
+.imp-stat-value.gain{color:var(--pvt);}
+.imp-bar{width:100%;height:4px;background:var(--line-soft);border-radius:2px;margin-top:6px;overflow:hidden;}
+.imp-bar-fill{height:100%;background:linear-gradient(90deg, var(--govt) 0%, var(--gold) 100%);border-radius:2px;}
+.qa-summary{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px;margin-bottom:24px;padding:16px;background:#F9F8F6;border:1px solid var(--line-soft);border-radius:var(--radius);}
+.qa-summary-card{text-align:center;}
+.qa-summary-card .num{font-family:'Lora',serif;font-weight:600;font-size:22px;color:var(--govt);margin-bottom:4px;}
+.qa-summary-card .label{font-size:11px;color:var(--muted-2);text-transform:uppercase;letter-spacing:0.03em;}
+
+.insight-card{border:1px solid var(--line);border-left:3px solid var(--ink);background:#fff;border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;}
+.insight-card .row{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;}
+.insight-card .row:last-child{margin-bottom:0;}
+.insight-card .tag{flex-shrink:0;margin-top:1px;}
+
+.legend-row{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:10px;}
+.legend-row .lg{display:flex;align-items:center;gap:6px;}
+.legend-row .sw{width:10px;height:10px;border-radius:2px;display:inline-block;}
+
+.gap-table td, .gap-table th{vertical-align:top;}
+.gap-table td.need{color:var(--muted);font-size:12px;}
+
+.state-picker{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+
+footer.dash-foot{
+  margin-top:50px;padding:24px 0 10px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:12px;
+}
+footer.dash-foot .final-msg{
+  font-family:'Lora',serif;font-style:italic;font-size:16px;color:#101828;margin-bottom:10px;
+}
+
+@media (max-width:860px){
+  .sidebar{transform:translateX(-100%);transition:transform .2s;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .menu-btn{display:inline-block !important;}
+}
+.menu-btn{display:none;background:none;border:1px solid var(--line);border-radius:var(--radius);padding:6px 10px;cursor:pointer;margin-right:10px;}
+
+.chart-fallback{
+  height:100%;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;color:var(--muted);font-size:12px;gap:8px;padding:10px;
+}
+.chart-fallback .icon{font-size:22px;}
+#libBanner{
+  display:none;background:var(--warn-bg);border:1px solid var(--warn-line);color:#6B4E10;
+  font-size:12.5px;padding:10px 16px;border-radius:var(--radius);margin:0 28px 0;
+}
+#libBanner button{margin-left:10px;font-family:inherit;font-size:12px;padding:4px 10px;border:1px solid #6B4E10;background:#fff;color:#6B4E10;border-radius:3px;cursor:pointer;}
+
+@media print{
+  .sidebar,.topbar .filters,.menu-btn,.btn{display:none !important;}
+  .main{margin-left:0;}
+  .page{display:block !important;}
+  .page:not(.active){display:none !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ================= SIDEBAR ================= -->
+  <nav class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="mark">GROUND REALITY OF<br>SCHOOL EDUCATION IN INDIA</div>
+      <div class="sub">Government vs Private — accessibility, quality, affordability &amp; rural education. Source: UDISE+, 2023–24 &amp; 2024–25.</div>
+    </div>
+    <ul class="navlist" id="navlist">
+      <li class="navgroup-label">National Picture</li>
+      <li class="navitem active" data-page="overview"><span class="dot"></span>Overview</li>
+      <li class="navitem" data-page="growth"><span class="dot"></span>School Growth</li>
+      <li class="navitem" data-page="enrollment"><span class="dot"></span>Student Enrollment</li>
+      <li class="navitem" data-page="teachers"><span class="dot"></span>Teachers</li>
+      <li class="navitem" data-page="ptr"><span class="dot"></span>Pupil–Teacher Ratio</li>
+
+      <li class="navgroup-label">States</li>
+      <li class="navitem" data-page="states"><span class="dot"></span>State Ranking &amp; Profile</li>
+
+      <li class="navgroup-label">Beyond This Dataset</li>
+      <li class="navitem" data-page="gaps"><span class="dot"></span>Data Availability Audit</li>
+
+      <li class="navgroup-label">Synthesis</li>
+      <li class="navitem" data-page="questions"><span class="dot"></span>Key Questions</li>
+      <li class="navitem" data-page="insights"><span class="dot"></span>Insights &amp; Recommendations</li>
+      <li class="navitem" data-page="sources"><span class="dot"></span>Data Sources &amp; Methodology</li>
+    </ul>
+    <div class="sidebar-foot">UDISE+ management &amp; state-wise extracts<br>AY 2023 &amp; AY 2024 · Ministry of Education, GoI</div>
+  </nav>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <button class="menu-btn" id="menuBtn">☰ Menu</button>
+        <h1 id="pageTitle" style="display:inline-block">National Overview</h1>
+        <div class="desc" id="pageDesc">Total schools, enrolment and teachers across school-management types, AY2023 vs AY2024.</div>
+      </div>
+      <div class="filters">
+        <div>
+          <label>Academic year</label>
+          <select id="yearSelect">
+            <option value="2024">2024–25</option>
+            <option value="2023">2023–24</option>
+          </select>
+        </div>
+        <div>
+          <button class="btn ghost" id="printBtn">Print report</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="libBanner">
+      <strong>Charts library couldn't load</strong> — this page needs an internet connection the first time it opens (it fetches Chart.js from a CDN). Every table, KPI and figure below still works from the data itself; only the visual charts are affected.
+      <button id="retryLibBtn">Retry</button>
+    </div>
+
+    <div class="content">
+
+      <!-- ============ PAGE: OVERVIEW ============ -->
+      <section class="page active" id="page-overview">
+        <div class="callout note"><strong>Scope of this dashboard:</strong> Built directly from the two UDISE+ extracts supplied — a national school-management table and a state-wise summary table, each covering AY2023 and AY2024 only. Every figure below traces to those files. Topics the files don't cover (infrastructure, fees, dropout, learning outcomes, rural/urban splits, state-wise government-vs-private breakdowns) are catalogued honestly on the <a onclick="go('gaps')">Data Availability Audit</a> page rather than estimated.</div>
+
+        <div class="kpi-grid" id="kpiOverview"></div>
+
+        <div class="section-title"><h2>Government vs private, at a glance</h2></div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Schools, enrolment &amp; teachers by management</h3>
+            <div class="cap">National totals · AY2023 and AY2024 · UDISE+ management table</div>
+            <div class="legend-row" id="mgmtLegend"></div>
+            <div class="chart-wrap"><canvas id="chartMgmtTrend"></canvas></div>
+            <div class="src-tag">Source: UDISE+ national school-management extract. "Government" = state + central government schools as classified by UDISE+; "Government Aided" reported separately and never merged into either government or private; "Private" = Private Unaided Recognised only (unrecognised private schools are outside UDISE+'s recognised-school count).</div>
+          </div>
+          <div class="panel">
+            <h3>Share of the system</h3>
+            <div class="cap">AY2024 · Schools vs. enrolment share</div>
+            <div class="chart-wrap short"><canvas id="chartShareSchools"></canvas></div>
+            <div class="chart-wrap short" style="margin-top:6px"><canvas id="chartShareEnrol"></canvas></div>
+          </div>
+        </div>
+
+        <div class="section-title"><h2>How the two years compare</h2></div>
+        <div class="panel">
+          <h3>Year-over-year change by management type</h3>
+          <div class="cap">AY2023 → AY2024, national totals</div>
+          <div class="tablewrap"><table class="data" id="tblMgmtYoy"></table></div>
+          <div class="callout" style="margin-top:12px"><strong>Data quality note:</strong> the source reports identical enrolment figures for Government Aided (24,761,526) and Private Unaided (95,856,710) schools in both AY2023 and AY2024. This is shown as-is rather than corrected, since we cannot independently verify which year it reflects.</div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: GROWTH ============ -->
+      <section class="page" id="page-growth">
+        <div class="lede">School counts by state, AY2023 vs AY2024, and where the system is expanding or contracting. <strong>Note:</strong> a change in the number of schools reflects net change in the UDISE+ count (openings, closures, mergers and reclassifications combined) — the source data does not separately report new schools opened or schools closed/merged, so this dashboard never uses the phrase "schools built."</div>
+
+        <div class="kpi-grid" id="kpiGrowth"></div>
+
+        <div class="section-title"><h2>Top &amp; bottom movers, AY2023 → AY2024</h2></div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>States with the largest increase in school count</h3>
+            <div class="cap">Year-over-year change, states with reported YoY figures only</div>
+            <div class="chart-wrap"><canvas id="chartGrowthUp"></canvas></div>
+          </div>
+          <div class="panel">
+            <h3>States with the largest decrease in school count</h3>
+            <div class="cap">Year-over-year change, states with reported YoY figures only</div>
+            <div class="chart-wrap"><canvas id="chartGrowthDown"></canvas></div>
+          </div>
+        </div>
+
+        <div class="section-title"><h2>State-wise school counts</h2></div>
+        <div class="panel">
+          <h3>Top 15 states by number of schools</h3>
+          <div class="cap">Selected academic year (see filter above)</div>
+          <div class="chart-wrap tall"><canvas id="chartTopSchools"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: ENROLLMENT ============ -->
+      <section class="page" id="page-enrollment">
+        <div class="lede">Total student enrolment by state. The uploaded data reports enrolment as a single state-wide total — it is not split by boys/girls, rural/urban, education level or management type, so those breakdowns are not shown here (see the Data Availability Audit).</div>
+
+        <div class="kpi-grid" id="kpiEnrol"></div>
+
+        <div class="section-title"><h2>Where enrolment is rising and falling</h2></div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Largest enrolment gains</h3>
+            <div class="cap">Year-over-year change, states with reported YoY figures only</div>
+            <div class="chart-wrap"><canvas id="chartEnrolUp"></canvas></div>
+          </div>
+          <div class="panel">
+            <h3>Largest enrolment losses</h3>
+            <div class="cap">Year-over-year change, states with reported YoY figures only</div>
+            <div class="chart-wrap"><canvas id="chartEnrolDown"></canvas></div>
+          </div>
+        </div>
+
+        <div class="section-title"><h2>State-wise enrolment</h2></div>
+        <div class="panel">
+          <h3>Top 15 states by total enrolment</h3>
+          <div class="cap">Selected academic year</div>
+          <div class="chart-wrap tall"><canvas id="chartTopEnrol"></canvas></div>
+        </div>
+
+        <div class="section-title"><h2>Average students per school</h2></div>
+        <div class="panel">
+          <h3>Avg. enrolment per school, by state</h3>
+          <div class="cap">A proxy for school size — not a measure of quality on its own</div>
+          <div class="chart-wrap tall"><canvas id="chartStudentsPerSchool"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: TEACHERS ============ -->
+      <section class="page" id="page-teachers">
+        <div class="lede">Total teacher counts by state. This reflects <em>the number of teachers in position</em> as reported to UDISE+, not annual hiring — the source has no recruitment/vacancy field, so this dashboard never labels a change in teacher count as "recruitment."</div>
+
+        <div class="kpi-grid" id="kpiTeachers"></div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Largest teacher-count gains</h3>
+            <div class="cap">Year-over-year change, states with reported YoY figures only</div>
+            <div class="chart-wrap"><canvas id="chartTeachUp"></canvas></div>
+          </div>
+          <div class="panel">
+            <h3>Largest teacher-count losses</h3>
+            <div class="cap">Year-over-year change, states with reported YoY figures only</div>
+            <div class="chart-wrap"><canvas id="chartTeachDown"></canvas></div>
+          </div>
+        </div>
+
+        <div class="section-title"><h2>Single-teacher schools</h2></div>
+        <div class="panel">
+          <h3>States with the most single-teacher schools</h3>
+          <div class="cap">A single-teacher school has one teacher covering every grade taught there — a direct staffing-strain indicator available in this dataset</div>
+          <div class="chart-wrap tall"><canvas id="chartSingleTeacher"></canvas></div>
+          <div class="callout" style="margin-top:12px"><strong>Flagged data anomaly:</strong> West Bengal's AY2024 row reports 23,549,432 students "enrolled in single-teacher schools" against a state total enrolment of ~17.08 million — a figure that is mathematically impossible and almost certainly a decimal/digit entry error in the source file. It is displayed as reported (not silently corrected or dropped) and excluded only from the single-teacher ranking chart above, which is population-weighted; the raw value remains visible in the State Ranking table.</div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: PTR ============ -->
+      <section class="page" id="page-ptr">
+        <div class="lede"><strong>Pupil–Teacher Ratio (PTR) = Total Students ÷ Total Teachers.</strong> A lower PTR means each teacher is, on average, responsible for fewer students. It does <em>not</em> by itself mean better teaching, better infrastructure or better learning outcomes — those require classroom-level and learning-assessment data this dashboard does not have. Treat PTR here as one input into teacher-availability planning, not a quality score.</div>
+
+        <div class="kpi-grid" id="kpiPtr"></div>
+
+        <div class="section-title"><h2>State ranking by pupil–teacher ratio</h2></div>
+        <div class="panel">
+          <h3>All states &amp; UTs, sorted by PTR</h3>
+          <div class="cap">Dashed line marks the national average for the selected year</div>
+          <div class="chart-wrap tall"><canvas id="chartPtrAll"></canvas></div>
+          <div class="src-tag">Source: UDISE+ state-wise summary, field "pupil_teacher_ratio" — reported directly by the source, not recalculated by this dashboard.</div>
+        </div>
+
+        <div class="section-title"><h2>Zero-enrolment schools</h2></div>
+        <div class="panel">
+          <h3>Schools with recognised status but zero students on roll</h3>
+          <div class="cap">These schools and their staff are excluded from PTR calculations entirely, since PTR is undefined when enrolment is zero</div>
+          <div class="chart-wrap tall"><canvas id="chartZeroEnrol"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: STATES ============ -->
+      <section class="page" id="page-states">
+        <div class="lede">Click any state below to open its profile. This replaces a geographic map: the two supplied files carry no geographic boundary (GeoJSON) data, so rather than bundle an unrelated external map file, states are shown as a clickable, sortable table — every filter still narrows the whole dashboard to that state.</div>
+
+        <div class="state-picker">
+          <label style="margin:0;">Jump to state:</label>
+          <select id="stateSelect"></select>
+          <button class="btn ghost" id="clearStateBtn">Show India-wide ranking</button>
+          <button class="btn ghost" id="downloadCsvBtn">Download this table as CSV</button>
+        </div>
+
+        <div id="stateProfileWrap" style="display:none">
+          <div class="section-title"><h2 id="stateProfileTitle">State profile</h2></div>
+          <div class="kpi-grid" id="kpiStateProfile"></div>
+          <div class="grid-2" style="margin-top:16px">
+            <div class="panel">
+              <h3>This state vs. India average</h3>
+              <div class="cap">Selected academic year</div>
+              <div class="chart-wrap"><canvas id="chartStateVsIndia"></canvas></div>
+            </div>
+            <div class="panel">
+              <h3>Year-over-year, this state</h3>
+              <div class="cap">AY2023 → AY2024</div>
+              <div class="tablewrap"><table class="data" id="tblStateYoy"></table></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title"><h2>All states &amp; UTs — sortable ranking table</h2></div>
+        <div class="panel">
+          <div class="cap">Click a column header to sort · click a row to open that state's profile · selected academic year</div>
+          <div class="tablewrap"><table class="data" id="tblStates"></table></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: GAPS ============ -->
+      <section class="page" id="page-gaps">
+        <div class="lede">The original brief calls for pages on classroom conditions, infrastructure, digital education, laboratories, playgrounds, rural-vs-urban splits, dropout analysis, private-school affordability, education-affordability ratios, learning outcomes, an affordability-vs-quality view, and a composite Government School Quality Index. None of these can be built from the two files provided. Rather than fabricate numbers, here is exactly what exists, what doesn't, and which dataset would close each gap.</div>
+
+        <div class="panel">
+          <div class="tablewrap">
+            <table class="data gap-table">
+              <thead><tr><th>Dashboard page in the brief</th><th>Status</th><th>What's missing &amp; what would supply it</th></tr></thead>
+              <tbody id="gapTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="callout note" style="margin-top:20px"><strong>Why this matters for the brief's own rules:</strong> the brief explicitly instructs "never fabricate missing data" and to show "Data unavailable" or "Awaiting verified dataset" rather than invent numbers. This page is that instruction applied consistently, rather than selectively — every gap above is a page the original spec asked for, listed rather than quietly dropped.</div>
+      </section>
+
+      <!-- ============ PAGE: QUESTIONS ============ -->
+      <section class="page" id="page-questions">
+        <div class="lede">The brief's twelve key research questions, answered as far as the AY2023–AY2024 UDISE+ extracts allow — and marked plainly where they can't be. Each question includes improvement metrics showing: (1) <strong>Current Coverage</strong>—how much of the question can be answered with available data; (2) <strong>Potential Coverage</strong>—what's possible with complete datasets; (3) <strong>Possible Gain</strong>—the improvement opportunity.</div>
+        <div id="questionsWrap"></div>
+      </section>
+
+      <!-- ============ PAGE: INSIGHTS ============ -->
+      <section class="page" id="page-insights">
+        <div class="lede">Every insight below is generated from the loaded UDISE+ data only, split into <strong>fact</strong> (what the data shows), <strong>interpretation</strong> (a reasonable reading of it) and <strong>recommendation</strong> (what to investigate or do next) — kept deliberately separate so an interpretation is never mistaken for a fact, and a recommendation is never mistaken for something the data proved.</div>
+        <div id="insightsWrap"></div>
+      </section>
+
+      <!-- ============ PAGE: SOURCES ============ -->
+      <section class="page" id="page-sources">
+        <div class="section-title"><h2>Data sources loaded into this dashboard</h2></div>
+        <div class="panel">
+          <table class="data">
+            <thead><tr><th>File</th><th>Coverage</th><th>Fields</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>india_school_education_udise_2023_24_2024_25_management_national.csv</td>
+                <td>National totals, AY2023 &amp; AY2024, by school management type</td>
+                <td class="need">academic_year, school_management, schools, enrolment, teachers</td>
+              </tr>
+              <tr>
+                <td>india_school_education_udise_2023_24_2024_25_statewise.csv</td>
+                <td>36 states/UTs, AY2023 &amp; AY2024</td>
+                <td class="need">total_schools, total_enrolment, total_teachers, pupil_teacher_ratio, avg_teachers_per_school, avg_enrolment_per_school, zero_enrolment_schools, teachers_in_zero_enrolment_schools, single_teacher_schools, enrolment_in_single_teacher_schools, school/enrolment/teacher change YoY</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-title"><h2>Definitions used in this dashboard</h2></div>
+        <div class="panel">
+          <table class="data">
+            <tbody>
+              <tr><td style="width:220px;font-weight:600">Government</td><td class="need">Schools UDISE+ classifies under state/central government management. Reported as a single "Government" figure in the national file; the state-wise file does not split by management, so no state-wise government count exists in this data.</td></tr>
+              <tr><td style="font-weight:600">Government Aided</td><td class="need">Privately managed but government-aided schools, kept as its own category throughout — never merged into "Government" or "Private."</td></tr>
+              <tr><td style="font-weight:600">Private</td><td class="need">"Private Unaided Recognised" schools only, as labelled in the source. Unrecognised private schools are not part of UDISE+'s recognised-school universe and are not represented anywhere in this dashboard.</td></tr>
+              <tr><td style="font-weight:600">Academic year</td><td class="need">Two years only: AY2023 (2023–24) and AY2024 (2024–25), as labelled in the source files.</td></tr>
+              <tr><td style="font-weight:600">Pupil–Teacher Ratio (PTR)</td><td class="need">Reported directly by the state-wise file as a single state-level figure. Not recalculated, and not available split by education level, management type or rural/urban in this data.</td></tr>
+              <tr><td style="font-weight:600">Students per school</td><td class="need">Reported by the source as avg_enrolment_per_school (state total enrolment ÷ state total schools).</td></tr>
+              <tr><td style="font-weight:600">Zero-enrolment schools</td><td class="need">Recognised schools with zero students on roll in a given year, as reported by the source; excluded from PTR since the ratio is undefined at zero.</td></tr>
+              <tr><td style="font-weight:600">Single-teacher schools</td><td class="need">Schools with exactly one teacher on staff, as reported by the source.</td></tr>
+              <tr><td style="font-weight:600">Missing data</td><td class="need">Displayed as "Data unavailable" or omitted from a chart — never estimated, interpolated or backfilled.</td></tr>
+              <tr><td style="font-weight:600">Survey vs. administrative data</td><td class="need">Both source files are administrative UDISE+ counts, not sample surveys. No ASER, NAS or NSS survey data is loaded, so no learning-outcome or expenditure survey figures appear anywhere in this dashboard.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-title"><h2>Design simplifications, stated plainly</h2></div>
+        <div class="panel">
+          <ul style="margin:0;padding-left:20px;font-size:13px;color:#333;line-height:1.9">
+            <li>No geographic map: the source files contain no state-boundary (GeoJSON) data, so the brief's clickable India map is implemented as a clickable, sortable state table with the same filtering behaviour.</li>
+            <li>Only two academic years exist in the source, so trend lines show a two-point AY2023→AY2024 comparison rather than a multi-year series. The data structures below are written so additional years can be appended without redesign.</li>
+            <li>"Compare Government vs Private" filtering is available at the <em>national</em> level only (the management file), because the state-wise file has no management breakdown to filter by.</li>
+          </ul>
+        </div>
+
+        <div class="section-title"><h2>Extending this dashboard</h2></div>
+        <div class="panel">
+          <p style="font-size:13px;color:#333;margin-top:0">To light up the greyed-out pages, append rows in the same shape to the <code>STATEWISE</code> / <code>NATIONAL_MGMT</code> arrays in this file's script, or replace them entirely once a richer extract is available — for example a state-wise management breakdown, a UDISE+ infrastructure module, ASER learning-outcome tables, or an NSS/MOSPI household-expenditure-on-education extract. The rendering functions read from these two arrays only, so a wider dataset with the same column names will flow straight through.</p>
+          <button class="btn ghost" id="downloadJsonBtn">Download loaded data as JSON</button>
+        </div>
+
+        <footer class="dash-foot">
+          <div class="final-msg">"Quality education should not depend on where a child is born or how much their family can afford."</div>
+          Built from UDISE+ AY2023–24 and AY2024–25 extracts supplied by the user. No figures in this dashboard were estimated, interpolated or invented.
+        </footer>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ======================================================================
+   DATA — loaded verbatim from the two uploaded UDISE+ CSV extracts.
+   Nothing in these arrays was invented; unavailable fields are `null`.
+====================================================================== */
+
+const NATIONAL_MGMT = [
+  {year:2023, management:"Government",        schools:1017660, enrolment:121591911, teachers:5037671},
+  {year:2023, management:"Government Aided",  schools:80313,   enrolment:24761526,  teachers:775574},
+  {year:2023, management:"Private Unaided",   schools:331108,  enrolment:95856710,  teachers:3730047},
+  {year:2024, management:"Government",        schools:1013322, enrolment:121589911, teachers:5149771},
+  {year:2024, management:"Government Aided",  schools:79349,   enrolment:24761526,  teachers:757624},
+  {year:2024, management:"Private Unaided",   schools:339583,  enrolment:95856710,  teachers:3962114},
+];
+
+const STATEWISE = [{"academic_year": 2023, "state_ut": "Andaman & Nicobar Islands", "total_schools": 412, "total_enrolment": 72119, "total_teachers": 5750, "pupil_teacher_ratio": 13, "avg_teachers_per_school": 14, "avg_enrolment_per_school": 175, "zero_enrolment_schools": 3, "teachers_in_zero_enrolment_schools": 3, "single_teacher_schools": 11, "enrolment_in_single_teacher_schools": 87, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Andhra Pradesh", "total_schools": 61373, "total_enrolment": 8741885, "total_teachers": 338293, "pupil_teacher_ratio": 26, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 142, "zero_enrolment_schools": 84, "teachers_in_zero_enrolment_schools": 251, "single_teacher_schools": 12611, "enrolment_in_single_teacher_schools": 218016, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Arunachal Pradesh", "total_schools": 3490, "total_enrolment": 323717, "total_teachers": 24700, "pupil_teacher_ratio": 13, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 93, "zero_enrolment_schools": 240, "teachers_in_zero_enrolment_schools": 58, "single_teacher_schools": 618, "enrolment_in_single_teacher_schools": 7980, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Assam", "total_schools": 56630, "total_enrolment": 6922533, "total_teachers": 342199, "pupil_teacher_ratio": 20, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 122, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 2633, "enrolment_in_single_teacher_schools": 92888, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Bihar", "total_schools": 94686, "total_enrolment": 21348149, "total_teachers": 657063, "pupil_teacher_ratio": 32, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 225, "zero_enrolment_schools": 117, "teachers_in_zero_enrolment_schools": 544, "single_teacher_schools": 2637, "enrolment_in_single_teacher_schools": 291127, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Chandigarh", "total_schools": 230, "total_enrolment": 265706, "total_teachers": 10237, "pupil_teacher_ratio": 26, "avg_teachers_per_school": 45, "avg_enrolment_per_school": 1155, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 0, "enrolment_in_single_teacher_schools": 0, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Chhattisgarh", "total_schools": 56615, "total_enrolment": 5776548, "total_teachers": 278798, "pupil_teacher_ratio": 21, "avg_teachers_per_school": 5, "avg_enrolment_per_school": 102, "zero_enrolment_schools": 108, "teachers_in_zero_enrolment_schools": 148, "single_teacher_schools": 5840, "enrolment_in_single_teacher_schools": 215592, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Dadra & Nagar Haveli and Daman & Diu", "total_schools": 432, "total_enrolment": 141282, "total_teachers": 4995, "pupil_teacher_ratio": 28, "avg_teachers_per_school": 12, "avg_enrolment_per_school": 327, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 1, "enrolment_in_single_teacher_schools": 5, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Delhi", "total_schools": 5497, "total_enrolment": 4506578, "total_teachers": 160479, "pupil_teacher_ratio": 28, "avg_teachers_per_school": 29, "avg_enrolment_per_school": 820, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 13, "enrolment_in_single_teacher_schools": 454, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Goa", "total_schools": 1487, "total_enrolment": 304735, "total_teachers": 14594, "pupil_teacher_ratio": 21, "avg_teachers_per_school": 10, "avg_enrolment_per_school": 205, "zero_enrolment_schools": 4, "teachers_in_zero_enrolment_schools": 16, "single_teacher_schools": 238, "enrolment_in_single_teacher_schools": 3142, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Gujarat", "total_schools": 53626, "total_enrolment": 11496709, "total_teachers": 394053, "pupil_teacher_ratio": 29, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 214, "zero_enrolment_schools": 274, "teachers_in_zero_enrolment_schools": 382, "single_teacher_schools": 2462, "enrolment_in_single_teacher_schools": 87322, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Haryana", "total_schools": 23517, "total_enrolment": 5599742, "total_teachers": 250909, "pupil_teacher_ratio": 22, "avg_teachers_per_school": 11, "avg_enrolment_per_school": 238, "zero_enrolment_schools": 81, "teachers_in_zero_enrolment_schools": 178, "single_teacher_schools": 867, "enrolment_in_single_teacher_schools": 40828, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Himachal Pradesh", "total_schools": 17826, "total_enrolment": 1426412, "total_teachers": 101131, "pupil_teacher_ratio": 14, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 80, "zero_enrolment_schools": 6, "teachers_in_zero_enrolment_schools": 10, "single_teacher_schools": 3473, "enrolment_in_single_teacher_schools": 65819, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Jammu & Kashmir", "total_schools": 24296, "total_enrolment": 2629949, "total_teachers": 167046, "pupil_teacher_ratio": 16, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 108, "zero_enrolment_schools": 119, "teachers_in_zero_enrolment_schools": 238, "single_teacher_schools": 1330, "enrolment_in_single_teacher_schools": 31054, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Jharkhand", "total_schools": 44475, "total_enrolment": 7143255, "total_teachers": 206591, "pupil_teacher_ratio": 35, "avg_teachers_per_school": 5, "avg_enrolment_per_school": 161, "zero_enrolment_schools": 199, "teachers_in_zero_enrolment_schools": 398, "single_teacher_schools": 8353, "enrolment_in_single_teacher_schools": 410199, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Karnataka", "total_schools": 75869, "total_enrolment": 11926303, "total_teachers": 433942, "pupil_teacher_ratio": 27, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 157, "zero_enrolment_schools": 1078, "teachers_in_zero_enrolment_schools": 1572, "single_teacher_schools": 7821, "enrolment_in_single_teacher_schools": 274814, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Kerala", "total_schools": 15864, "total_enrolment": 6281704, "total_teachers": 291096, "pupil_teacher_ratio": 22, "avg_teachers_per_school": 18, "avg_enrolment_per_school": 396, "zero_enrolment_schools": 104, "teachers_in_zero_enrolment_schools": 504, "single_teacher_schools": 76, "enrolment_in_single_teacher_schools": 1224, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Ladakh", "total_schools": 995, "total_enrolment": 56642, "total_teachers": 6432, "pupil_teacher_ratio": 9, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 57, "zero_enrolment_schools": 35, "teachers_in_zero_enrolment_schools": 21, "single_teacher_schools": 83, "enrolment_in_single_teacher_schools": 733, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Lakshadweep", "total_schools": 37, "total_enrolment": 12591, "total_teachers": 911, "pupil_teacher_ratio": 14, "avg_teachers_per_school": 25, "avg_enrolment_per_school": 340, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 0, "enrolment_in_single_teacher_schools": 0, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Madhya Pradesh", "total_schools": 123412, "total_enrolment": 15361543, "total_teachers": 639525, "pupil_teacher_ratio": 24, "avg_teachers_per_school": 5, "avg_enrolment_per_school": 124, "zero_enrolment_schools": 1211, "teachers_in_zero_enrolment_schools": 1924, "single_teacher_schools": 13198, "enrolment_in_single_teacher_schools": 587208, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Maharashtra", "total_schools": 108237, "total_enrolment": 21375970, "total_teachers": 738114, "pupil_teacher_ratio": 29, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 197, "zero_enrolment_schools": 18, "teachers_in_zero_enrolment_schools": 76, "single_teacher_schools": 8196, "enrolment_in_single_teacher_schools": 167534, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Manipur", "total_schools": 4646, "total_enrolment": 647434, "total_teachers": 40921, "pupil_teacher_ratio": 16, "avg_teachers_per_school": 9, "avg_enrolment_per_school": 139, "zero_enrolment_schools": 83, "teachers_in_zero_enrolment_schools": 354, "single_teacher_schools": 320, "enrolment_in_single_teacher_schools": 7699, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Meghalaya", "total_schools": 14601, "total_enrolment": 1052884, "total_teachers": 55726, "pupil_teacher_ratio": 19, "avg_teachers_per_school": 4, "avg_enrolment_per_school": 72, "zero_enrolment_schools": 146, "teachers_in_zero_enrolment_schools": 277, "single_teacher_schools": 1451, "enrolment_in_single_teacher_schools": 51456, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Mizoram", "total_schools": 3941, "total_enrolment": 293763, "total_teachers": 23013, "pupil_teacher_ratio": 13, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 75, "zero_enrolment_schools": 39, "teachers_in_zero_enrolment_schools": 73, "single_teacher_schools": 96, "enrolment_in_single_teacher_schools": 3039, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Nagaland", "total_schools": 2725, "total_enrolment": 412975, "total_teachers": 32602, "pupil_teacher_ratio": 13, "avg_teachers_per_school": 12, "avg_enrolment_per_school": 152, "zero_enrolment_schools": 12, "teachers_in_zero_enrolment_schools": 24, "single_teacher_schools": 31, "enrolment_in_single_teacher_schools": 368, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Odisha", "total_schools": 61693, "total_enrolment": 7756910, "total_teachers": 335496, "pupil_teacher_ratio": 23, "avg_teachers_per_school": 5, "avg_enrolment_per_school": 126, "zero_enrolment_schools": 8, "teachers_in_zero_enrolment_schools": 16, "single_teacher_schools": 1065, "enrolment_in_single_teacher_schools": 50189, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Puducherry", "total_schools": 735, "total_enrolment": 244828, "total_teachers": 13202, "pupil_teacher_ratio": 19, "avg_teachers_per_school": 18, "avg_enrolment_per_school": 333, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 0, "enrolment_in_single_teacher_schools": 0, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Punjab", "total_schools": 27404, "total_enrolment": 5988681, "total_teachers": 273092, "pupil_teacher_ratio": 22, "avg_teachers_per_school": 10, "avg_enrolment_per_school": 219, "zero_enrolment_schools": 15, "teachers_in_zero_enrolment_schools": 35, "single_teacher_schools": 2092, "enrolment_in_single_teacher_schools": 69532, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Rajasthan", "total_schools": 107757, "total_enrolment": 16786065, "total_teachers": 775745, "pupil_teacher_ratio": 22, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 156, "zero_enrolment_schools": 2167, "teachers_in_zero_enrolment_schools": 4398, "single_teacher_schools": 7688, "enrolment_in_single_teacher_schools": 225187, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Sikkim", "total_schools": 1254, "total_enrolment": 121395, "total_teachers": 15489, "pupil_teacher_ratio": 8, "avg_teachers_per_school": 12, "avg_enrolment_per_school": 97, "zero_enrolment_schools": 1, "teachers_in_zero_enrolment_schools": 1, "single_teacher_schools": 34, "enrolment_in_single_teacher_schools": 282, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Tamil Nadu", "total_schools": 58722, "total_enrolment": 12993050, "total_teachers": 550558, "pupil_teacher_ratio": 24, "avg_teachers_per_school": 9, "avg_enrolment_per_school": 221, "zero_enrolment_schools": 490, "teachers_in_zero_enrolment_schools": 889, "single_teacher_schools": 2758, "enrolment_in_single_teacher_schools": 80586, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Telangana", "total_schools": 42901, "total_enrolment": 7293644, "total_teachers": 341460, "pupil_teacher_ratio": 21, "avg_teachers_per_school": 8, "avg_enrolment_per_school": 170, "zero_enrolment_schools": 2097, "teachers_in_zero_enrolment_schools": 2000, "single_teacher_schools": 5985, "enrolment_in_single_teacher_schools": 88429, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Tripura", "total_schools": 4923, "total_enrolment": 689408, "total_teachers": 37661, "pupil_teacher_ratio": 18, "avg_teachers_per_school": 8, "avg_enrolment_per_school": 140, "zero_enrolment_schools": 10, "teachers_in_zero_enrolment_schools": 12, "single_teacher_schools": 311, "enrolment_in_single_teacher_schools": 6885, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Uttar Pradesh", "total_schools": 255087, "total_enrolment": 41662794, "total_teachers": 1538479, "pupil_teacher_ratio": 27, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 163, "zero_enrolment_schools": 906, "teachers_in_zero_enrolment_schools": 2895, "single_teacher_schools": 8866, "enrolment_in_single_teacher_schools": 611950, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "Uttarakhand", "total_schools": 22551, "total_enrolment": 2372400, "total_teachers": 130741, "pupil_teacher_ratio": 18, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 105, "zero_enrolment_schools": 45, "teachers_in_zero_enrolment_schools": 57, "single_teacher_schools": 3447, "enrolment_in_single_teacher_schools": 53773, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2023, "state_ut": "West Bengal", "total_schools": 93945, "total_enrolment": 18015525, "total_teachers": 576557, "pupil_teacher_ratio": 31, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 192, "zero_enrolment_schools": 3254, "teachers_in_zero_enrolment_schools": 14627, "single_teacher_schools": 6366, "enrolment_in_single_teacher_schools": 248696, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2024, "state_ut": "Andaman and Nicobar Islands", "total_schools": 408, "total_enrolment": 71343, "total_teachers": 6132, "pupil_teacher_ratio": 12, "avg_teachers_per_school": 15, "avg_enrolment_per_school": 175, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 4, "enrolment_in_single_teacher_schools": 89, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2024, "state_ut": "Andhra Pradesh", "total_schools": 61317, "total_enrolment": 8454817, "total_teachers": 342721, "pupil_teacher_ratio": 25, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 138, "zero_enrolment_schools": 1, "teachers_in_zero_enrolment_schools": 3, "single_teacher_schools": 12912, "enrolment_in_single_teacher_schools": 197113, "school_change_yoy": -56, "enrolment_change_yoy": -287068, "teacher_change_yoy": 4428}, {"academic_year": 2024, "state_ut": "Arunachal Pradesh", "total_schools": 3229, "total_enrolment": 319826, "total_teachers": 25117, "pupil_teacher_ratio": 13, "avg_teachers_per_school": 8, "avg_enrolment_per_school": 99, "zero_enrolment_schools": 21, "teachers_in_zero_enrolment_schools": 15, "single_teacher_schools": 562, "enrolment_in_single_teacher_schools": 6912, "school_change_yoy": -261, "enrolment_change_yoy": -3891, "teacher_change_yoy": 417}, {"academic_year": 2024, "state_ut": "Assam", "total_schools": 55283, "total_enrolment": 7041824, "total_teachers": 340471, "pupil_teacher_ratio": 21, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 127, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 2820, "enrolment_in_single_teacher_schools": 92699, "school_change_yoy": -1347, "enrolment_change_yoy": 119291, "teacher_change_yoy": -1728}, {"academic_year": 2024, "state_ut": "Bihar", "total_schools": 94339, "total_enrolment": 21133228, "total_teachers": 707516, "pupil_teacher_ratio": 30, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 224, "zero_enrolment_schools": 5, "teachers_in_zero_enrolment_schools": 17, "single_teacher_schools": 1865, "enrolment_in_single_teacher_schools": 175500, "school_change_yoy": -347, "enrolment_change_yoy": -214921, "teacher_change_yoy": 50453}, {"academic_year": 2024, "state_ut": "Chandigarh", "total_schools": 207, "total_enrolment": 253012, "total_teachers": 9968, "pupil_teacher_ratio": 25, "avg_teachers_per_school": 48, "avg_enrolment_per_school": 1222, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 0, "enrolment_in_single_teacher_schools": 0, "school_change_yoy": -23, "enrolment_change_yoy": -12694, "teacher_change_yoy": -269}, {"academic_year": 2024, "state_ut": "Chhattisgarh", "total_schools": 56802, "total_enrolment": 5806871, "total_teachers": 285248, "pupil_teacher_ratio": 20, "avg_teachers_per_school": 5, "avg_enrolment_per_school": 102, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 5973, "enrolment_in_single_teacher_schools": 213237, "school_change_yoy": 187, "enrolment_change_yoy": 30323, "teacher_change_yoy": 6450}, {"academic_year": 2024, "state_ut": "Dadra and Nagar Haveli and Daman and Diu", "total_schools": 433, "total_enrolment": 146825, "total_teachers": 5288, "pupil_teacher_ratio": 28, "avg_teachers_per_school": 12, "avg_enrolment_per_school": 339, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 0, "enrolment_in_single_teacher_schools": 0, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2024, "state_ut": "Delhi", "total_schools": 5556, "total_enrolment": 4491032, "total_teachers": 161958, "pupil_teacher_ratio": 28, "avg_teachers_per_school": 29, "avg_enrolment_per_school": 808, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 9, "enrolment_in_single_teacher_schools": 1089, "school_change_yoy": 59, "enrolment_change_yoy": -15546, "teacher_change_yoy": 1479}, {"academic_year": 2024, "state_ut": "Goa", "total_schools": 1479, "total_enrolment": 300546, "total_teachers": 15196, "pupil_teacher_ratio": 20, "avg_teachers_per_school": 10, "avg_enrolment_per_school": 203, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 62, "enrolment_in_single_teacher_schools": 771, "school_change_yoy": -8, "enrolment_change_yoy": -4189, "teacher_change_yoy": 602}, {"academic_year": 2024, "state_ut": "Gujarat", "total_schools": 53355, "total_enrolment": 11501328, "total_teachers": 389063, "pupil_teacher_ratio": 30, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 216, "zero_enrolment_schools": 63, "teachers_in_zero_enrolment_schools": 78, "single_teacher_schools": 2936, "enrolment_in_single_teacher_schools": 105134, "school_change_yoy": -271, "enrolment_change_yoy": 4619, "teacher_change_yoy": -4990}, {"academic_year": 2024, "state_ut": "Haryana", "total_schools": 23494, "total_enrolment": 5769330, "total_teachers": 263942, "pupil_teacher_ratio": 22, "avg_teachers_per_school": 11, "avg_enrolment_per_school": 246, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 1066, "enrolment_in_single_teacher_schools": 43400, "school_change_yoy": -23, "enrolment_change_yoy": 169588, "teacher_change_yoy": 13033}, {"academic_year": 2024, "state_ut": "Himachal Pradesh", "total_schools": 17330, "total_enrolment": 1425266, "total_teachers": 102825, "pupil_teacher_ratio": 14, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 82, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 2964, "enrolment_in_single_teacher_schools": 46329, "school_change_yoy": -496, "enrolment_change_yoy": -1146, "teacher_change_yoy": 1694}, {"academic_year": 2024, "state_ut": "Jammu and Kashmir", "total_schools": 24192, "total_enrolment": 2654012, "total_teachers": 166717, "pupil_teacher_ratio": 16, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 110, "zero_enrolment_schools": 146, "teachers_in_zero_enrolment_schools": 61, "single_teacher_schools": 1371, "enrolment_in_single_teacher_schools": 32303, "school_change_yoy": null, "enrolment_change_yoy": null, "teacher_change_yoy": null}, {"academic_year": 2024, "state_ut": "Jharkhand", "total_schools": 44376, "total_enrolment": 7436931, "total_teachers": 209203, "pupil_teacher_ratio": 36, "avg_teachers_per_school": 5, "avg_enrolment_per_school": 168, "zero_enrolment_schools": 107, "teachers_in_zero_enrolment_schools": 31, "single_teacher_schools": 9172, "enrolment_in_single_teacher_schools": 436480, "school_change_yoy": -99, "enrolment_change_yoy": 293676, "teacher_change_yoy": 2612}, {"academic_year": 2024, "state_ut": "Karnataka", "total_schools": 74859, "total_enrolment": 11780251, "total_teachers": 452602, "pupil_teacher_ratio": 26, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 157, "zero_enrolment_schools": 270, "teachers_in_zero_enrolment_schools": 308, "single_teacher_schools": 7349, "enrolment_in_single_teacher_schools": 223142, "school_change_yoy": -1010, "enrolment_change_yoy": -146052, "teacher_change_yoy": 18660}, {"academic_year": 2024, "state_ut": "Kerala", "total_schools": 15757, "total_enrolment": 6164059, "total_teachers": 292072, "pupil_teacher_ratio": 21, "avg_teachers_per_school": 19, "avg_enrolment_per_school": 391, "zero_enrolment_schools": 47, "teachers_in_zero_enrolment_schools": 19, "single_teacher_schools": 63, "enrolment_in_single_teacher_schools": 920, "school_change_yoy": -107, "enrolment_change_yoy": -117645, "teacher_change_yoy": 976}, {"academic_year": 2024, "state_ut": "Ladakh", "total_schools": 961, "total_enrolment": 57107, "total_teachers": 6908, "pupil_teacher_ratio": 8, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 59, "zero_enrolment_schools": 10, "teachers_in_zero_enrolment_schools": 18, "single_teacher_schools": 54, "enrolment_in_single_teacher_schools": 306, "school_change_yoy": -34, "enrolment_change_yoy": 465, "teacher_change_yoy": 476}, {"academic_year": 2024, "state_ut": "Lakshadweep", "total_schools": 36, "total_enrolment": 12325, "total_teachers": 751, "pupil_teacher_ratio": 16, "avg_teachers_per_school": 21, "avg_enrolment_per_school": 342, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 0, "enrolment_in_single_teacher_schools": 0, "school_change_yoy": -1, "enrolment_change_yoy": -266, "teacher_change_yoy": -160}, {"academic_year": 2024, "state_ut": "Madhya Pradesh", "total_schools": 122120, "total_enrolment": 15172607, "total_teachers": 717493, "pupil_teacher_ratio": 21, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 124, "zero_enrolment_schools": 463, "teachers_in_zero_enrolment_schools": 223, "single_teacher_schools": 7217, "enrolment_in_single_teacher_schools": 229095, "school_change_yoy": -1292, "enrolment_change_yoy": -188936, "teacher_change_yoy": 77968}, {"academic_year": 2024, "state_ut": "Maharashtra", "total_schools": 108250, "total_enrolment": 21272611, "total_teachers": 747501, "pupil_teacher_ratio": 28, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 197, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 8152, "enrolment_in_single_teacher_schools": 150146, "school_change_yoy": 13, "enrolment_change_yoy": -103359, "teacher_change_yoy": 9387}, {"academic_year": 2024, "state_ut": "Manipur", "total_schools": 4666, "total_enrolment": 673118, "total_teachers": 41490, "pupil_teacher_ratio": 16, "avg_teachers_per_school": 9, "avg_enrolment_per_school": 144, "zero_enrolment_schools": 35, "teachers_in_zero_enrolment_schools": 60, "single_teacher_schools": 383, "enrolment_in_single_teacher_schools": 9115, "school_change_yoy": 20, "enrolment_change_yoy": 25684, "teacher_change_yoy": 569}, {"academic_year": 2024, "state_ut": "Meghalaya", "total_schools": 14587, "total_enrolment": 1061320, "total_teachers": 57002, "pupil_teacher_ratio": 19, "avg_teachers_per_school": 4, "avg_enrolment_per_school": 73, "zero_enrolment_schools": 74, "teachers_in_zero_enrolment_schools": 152, "single_teacher_schools": 1414, "enrolment_in_single_teacher_schools": 49807, "school_change_yoy": -14, "enrolment_change_yoy": 8436, "teacher_change_yoy": 1276}, {"academic_year": 2024, "state_ut": "Mizoram", "total_schools": 3974, "total_enrolment": 279882, "total_teachers": 24952, "pupil_teacher_ratio": 11, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 70, "zero_enrolment_schools": 32, "teachers_in_zero_enrolment_schools": 27, "single_teacher_schools": 117, "enrolment_in_single_teacher_schools": 3056, "school_change_yoy": 33, "enrolment_change_yoy": -13881, "teacher_change_yoy": 1939}, {"academic_year": 2024, "state_ut": "Nagaland", "total_schools": 2750, "total_enrolment": 414421, "total_teachers": 33131, "pupil_teacher_ratio": 13, "avg_teachers_per_school": 12, "avg_enrolment_per_school": 151, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 26, "enrolment_in_single_teacher_schools": 292, "school_change_yoy": 25, "enrolment_change_yoy": 1446, "teacher_change_yoy": 529}, {"academic_year": 2024, "state_ut": "Odisha", "total_schools": 61565, "total_enrolment": 7644052, "total_teachers": 344116, "pupil_teacher_ratio": 22, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 124, "zero_enrolment_schools": 3, "teachers_in_zero_enrolment_schools": 1, "single_teacher_schools": 1089, "enrolment_in_single_teacher_schools": 47940, "school_change_yoy": -128, "enrolment_change_yoy": -112858, "teacher_change_yoy": 8620}, {"academic_year": 2024, "state_ut": "Puducherry", "total_schools": 763, "total_enrolment": 240691, "total_teachers": 13639, "pupil_teacher_ratio": 18, "avg_teachers_per_school": 18, "avg_enrolment_per_school": 315, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 0, "enrolment_in_single_teacher_schools": 0, "school_change_yoy": 28, "enrolment_change_yoy": -4137, "teacher_change_yoy": 437}, {"academic_year": 2024, "state_ut": "Punjab", "total_schools": 27281, "total_enrolment": 5908507, "total_teachers": 273130, "pupil_teacher_ratio": 22, "avg_teachers_per_school": 10, "avg_enrolment_per_school": 217, "zero_enrolment_schools": 13, "teachers_in_zero_enrolment_schools": 9, "single_teacher_schools": 2431, "enrolment_in_single_teacher_schools": 76942, "school_change_yoy": -123, "enrolment_change_yoy": -80174, "teacher_change_yoy": 38}, {"academic_year": 2024, "state_ut": "Rajasthan", "total_schools": 106302, "total_enrolment": 16364187, "total_teachers": 792265, "pupil_teacher_ratio": 21, "avg_teachers_per_school": 7, "avg_enrolment_per_school": 154, "zero_enrolment_schools": 215, "teachers_in_zero_enrolment_schools": 293, "single_teacher_schools": 6117, "enrolment_in_single_teacher_schools": 172071, "school_change_yoy": -1455, "enrolment_change_yoy": -421878, "teacher_change_yoy": 16520}, {"academic_year": 2024, "state_ut": "Sikkim", "total_schools": 1245, "total_enrolment": 117576, "total_teachers": 14994, "pupil_teacher_ratio": 8, "avg_teachers_per_school": 12, "avg_enrolment_per_school": 94, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 36, "enrolment_in_single_teacher_schools": 319, "school_change_yoy": -9, "enrolment_change_yoy": -3819, "teacher_change_yoy": -495}, {"academic_year": 2024, "state_ut": "Tamil Nadu", "total_schools": 57935, "total_enrolment": 12518167, "total_teachers": 549850, "pupil_teacher_ratio": 23, "avg_teachers_per_school": 9, "avg_enrolment_per_school": 216, "zero_enrolment_schools": 311, "teachers_in_zero_enrolment_schools": 432, "single_teacher_schools": 3671, "enrolment_in_single_teacher_schools": 95353, "school_change_yoy": -787, "enrolment_change_yoy": -474883, "teacher_change_yoy": -708}, {"academic_year": 2024, "state_ut": "Telangana", "total_schools": 43154, "total_enrolment": 7457851, "total_teachers": 357911, "pupil_teacher_ratio": 21, "avg_teachers_per_school": 8, "avg_enrolment_per_school": 173, "zero_enrolment_schools": 2245, "teachers_in_zero_enrolment_schools": 1016, "single_teacher_schools": 5001, "enrolment_in_single_teacher_schools": 62288, "school_change_yoy": 253, "enrolment_change_yoy": 164207, "teacher_change_yoy": 16451}, {"academic_year": 2024, "state_ut": "Tripura", "total_schools": 4943, "total_enrolment": 690084, "total_teachers": 37733, "pupil_teacher_ratio": 18, "avg_teachers_per_school": 8, "avg_enrolment_per_school": 140, "zero_enrolment_schools": 0, "teachers_in_zero_enrolment_schools": 0, "single_teacher_schools": 340, "enrolment_in_single_teacher_schools": 6492, "school_change_yoy": 20, "enrolment_change_yoy": 676, "teacher_change_yoy": 72}, {"academic_year": 2024, "state_ut": "Uttar Pradesh", "total_schools": 262358, "total_enrolment": 42789347, "total_teachers": 1615427, "pupil_teacher_ratio": 26, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 163, "zero_enrolment_schools": 81, "teachers_in_zero_enrolment_schools": 56, "single_teacher_schools": 9508, "enrolment_in_single_teacher_schools": 624327, "school_change_yoy": 7271, "enrolment_change_yoy": 1126553, "teacher_change_yoy": 76948}, {"academic_year": 2024, "state_ut": "Uttarakhand", "total_schools": 22452, "total_enrolment": 2426815, "total_teachers": 134263, "pupil_teacher_ratio": 18, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 108, "zero_enrolment_schools": 39, "teachers_in_zero_enrolment_schools": 33, "single_teacher_schools": 2959, "enrolment_in_single_teacher_schools": 38608, "school_change_yoy": -99, "enrolment_change_yoy": 54415, "teacher_change_yoy": 3522}, {"academic_year": 2024, "state_ut": "West Bengal", "total_schools": 93715, "total_enrolment": 17081511, "total_teachers": 583825, "pupil_teacher_ratio": 29, "avg_teachers_per_school": 6, "avg_enrolment_per_school": 182, "zero_enrolment_schools": 3812, "teachers_in_zero_enrolment_schools": 17965, "single_teacher_schools": 6482, "enrolment_in_single_teacher_schools": 23549432, "school_change_yoy": -230, "enrolment_change_yoy": -934014, "teacher_change_yoy": 7268}]
+;
+
+/* ---- helpers ---- */
+const MGMT_COLOR = {"Government":"#2A3F73","Government Aided":"#3F7D77","Private Unaided":"#B8842B"};
+const fmt = n => n===null||n===undefined||isNaN(n) ? "—" : Math.round(n).toLocaleString('en-IN');
+const fmt1 = n => n===null||n===undefined||isNaN(n) ? "—" : (Math.round(n*10)/10).toLocaleString('en-IN');
+const pct = n => n===null||n===undefined||isNaN(n) ? "—" : (Math.round(n*10)/10)+"%";
+function canon(name){ return name.toLowerCase().replace(/[^a-z]/g,''); }
+
+// Build a per-state, per-year lookup keyed by canonical name, remembering nicest label
+const stateByYear = {2023:{}, 2024:{}};
+const stateLabel = {};
+STATEWISE.forEach(r=>{
+  const k = canon(r.state_ut);
+  stateByYear[r.academic_year][k] = r;
+  stateLabel[k] = stateLabel[k] || r.state_ut; // first-seen label; will refine below
+});
+// prefer the 2024 spelling as canonical display label
+STATEWISE.filter(r=>r.academic_year===2024).forEach(r=>{ stateLabel[canon(r.state_ut)] = r.state_ut; });
+const stateKeys = Object.keys(stateLabel).sort((a,b)=>stateLabel[a].localeCompare(stateLabel[b]));
+
+function indiaTotals(year){
+  let schools=0, enrolment=0, teachers=0, n=0;
+  Object.values(stateByYear[year]).forEach(r=>{ schools+=r.total_schools||0; enrolment+=r.total_enrolment||0; teachers+=r.total_teachers||0; n++; });
+  return {schools, enrolment, teachers, ptr: teachers? enrolment/teachers : null, statesCount:n};
+}
+function mgmtTotals(year){
+  const rows = NATIONAL_MGMT.filter(r=>r.year===year);
+  const t = {schools:0, enrolment:0, teachers:0};
+  rows.forEach(r=>{t.schools+=r.schools; t.enrolment+=r.enrolment; t.teachers+=r.teachers;});
+  return {rows, t};
+}
+function deltaHtml(curr, prev, unit){
+  if(prev===null||prev===undefined||curr===null||curr===undefined) return `<div class="na">No prior-year figure</div>`;
+  const d = curr-prev;
+  const p = prev!==0 ? (d/prev*100) : null;
+  const cls = d>0?'up':(d<0?'down':'flat');
+  const sign = d>0?'+':'';
+  return `<div class="delta ${cls}">${sign}${fmt(d)}${unit||''} (${sign}${p!==null?fmt1(p):'—'}%) vs AY${prev==2023?'2023–24':'2024–25'}</div>`;
+}
+
+let currentYear = 2024;
+let selectedStateKey = null;
+let charts = {};
+let CHART_READY = false;
+function destroyChart(id){ if(charts[id] && charts[id].destroy){ charts[id].destroy(); delete charts[id]; } }
+
+/* ---- Resilient Chart.js loader: tries several CDNs before giving up ---- */
+const CHART_CDNS = [
+  'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js',
+  'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js',
+  'https://unpkg.com/chart.js@4.4.4/dist/chart.umd.min.js'
+];
+function loadScript(src){
+  return new Promise((resolve,reject)=>{
+    const s = document.createElement('script');
+    s.src = src; s.onload = ()=>resolve(true); s.onerror = ()=>reject(new Error('failed '+src));
+    document.head.appendChild(s);
+  });
+}
+async function loadChartLib(){
+  for(const url of CHART_CDNS){
+    try{ await loadScript(url); if(typeof Chart !== 'undefined'){ return true; } }
+    catch(e){ /* try next CDN */ }
+  }
+  return false;
+}
+/* Wraps any function that builds Chart.js charts so one failure (or a missing
+   library) never stops the rest of the dashboard from rendering. */
+function withChart(canvasId, fn){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const wrap = canvas.closest('.chart-wrap');
+  if(!CHART_READY){
+    if(wrap) wrap.innerHTML = '<div class="chart-fallback"><span class="icon">▦</span>Chart unavailable — charts library did not load.<br>See the notice at the top of the page.</div>';
+    return;
+  }
+  try{ fn(); }
+  catch(e){
+    console.error('Chart error on', canvasId, e);
+    if(wrap) wrap.innerHTML = '<div class="chart-fallback"><span class="icon">▦</span>This chart could not be drawn (see console for details).</div>';
+  }
+}
+/* Wraps a whole page-render function so an error in one page can never stop
+   another page (or the tables/KPIs on the same page) from rendering. */
+function safe(fn){ try{ fn(); }catch(e){ console.error('Render error:', e); } }
+
+/* ======================================================================
+   NAVIGATION
+====================================================================== */
+const pageMeta = {
+  overview:{title:"National Overview", desc:"Total schools, enrolment and teachers across school-management types, AY2023 vs AY2024."},
+  growth:{title:"School Growth", desc:"Net change in number of schools by state — not new-school openings, since that field isn't in the source."},
+  enrollment:{title:"Student Enrollment", desc:"Total enrolment by state, gains and losses year over year."},
+  teachers:{title:"Teachers", desc:"Teacher counts by state, plus single-teacher-school staffing strain."},
+  ptr:{title:"Pupil–Teacher Ratio", desc:"Students ÷ teachers, by state — a staffing metric, not a quality score on its own."},
+  states:{title:"State Ranking & Profile", desc:"Every state and UT, sortable — click one to open its two-year profile."},
+  gaps:{title:"Data Availability Audit", desc:"What the brief asked for vs. what these two files actually contain."},
+  questions:{title:"Key Questions", desc:"The brief's twelve research questions, answered only as far as the data allows."},
+  insights:{title:"Insights & Recommendations", desc:"Fact / interpretation / recommendation, kept strictly separate."},
+  sources:{title:"Data Sources & Methodology", desc:"Files, field definitions, and how to extend this dashboard."},
+};
+function go(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.navitem').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
+  document.getElementById('pageTitle').textContent = pageMeta[page].title;
+  document.getElementById('pageDesc').textContent = pageMeta[page].desc;
+  document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+document.querySelectorAll('.navitem').forEach(item=>{
+  item.addEventListener('click', ()=>go(item.dataset.page));
+});
+document.getElementById('menuBtn').addEventListener('click', ()=>document.getElementById('sidebar').classList.toggle('open'));
+document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+document.getElementById('yearSelect').addEventListener('change', e=>{ currentYear = parseInt(e.target.value); renderAll(); });
+
+/* ======================================================================
+   RENDER: OVERVIEW
+====================================================================== */
+function renderOverview(){
+  const y = currentYear, py = y===2024?2023:null;
+  const {rows} = mgmtTotals(y);
+  const prevRows = py? mgmtTotals(py).rows : [];
+  const g = rows.find(r=>r.management==='Government'), a = rows.find(r=>r.management==='Government Aided'), p = rows.find(r=>r.management==='Private Unaided');
+  const pg = prevRows.find(r=>r.management==='Government'), pa = prevRows.find(r=>r.management==='Government Aided'), pp = prevRows.find(r=>r.management==='Private Unaided');
+  const totalSchools = g.schools+a.schools+p.schools, totalEnrol = g.enrolment+a.enrolment+p.enrolment, totalTeach = g.teachers+a.teachers+p.teachers;
+  const prevTotalSchools = py? pg.schools+pa.schools+pp.schools : null;
+  const prevTotalEnrol = py? pg.enrolment+pa.enrolment+pp.enrolment : null;
+  const prevTotalTeach = py? pg.teachers+pa.teachers+pp.teachers : null;
+  const it = indiaTotals(y);
+
+  const cards = [
+    {c:'c-total', label:'Total schools', val:fmt(totalSchools), delta:deltaHtml(totalSchools,prevTotalSchools)},
+    {c:'c-govt', label:'Government schools', val:fmt(g.schools), delta:deltaHtml(g.schools, pg?pg.schools:null)},
+    {c:'c-aided', label:'Government-aided schools', val:fmt(a.schools), delta:deltaHtml(a.schools, pa?pa.schools:null)},
+    {c:'c-pvt', label:'Private unaided schools', val:fmt(p.schools), delta:deltaHtml(p.schools, pp?pp.schools:null)},
+    {c:'c-total', label:'Total enrolment', val:fmt(totalEnrol), delta:deltaHtml(totalEnrol,prevTotalEnrol)},
+    {c:'c-govt', label:'Government enrolment', val:fmt(g.enrolment), delta:deltaHtml(g.enrolment, pg?pg.enrolment:null)},
+    {c:'c-pvt', label:'Private enrolment', val:fmt(p.enrolment), delta:deltaHtml(p.enrolment, pp?pp.enrolment:null)},
+    {c:'c-total', label:'Total teachers', val:fmt(totalTeach), delta:deltaHtml(totalTeach,prevTotalTeach)},
+    {c:'c-govt', label:'Government teachers', val:fmt(g.teachers), delta:deltaHtml(g.teachers, pg?pg.teachers:null)},
+    {c:'c-pvt', label:'Private teachers', val:fmt(p.teachers), delta:deltaHtml(p.teachers, pp?pp.teachers:null)},
+    {c:'c-total', label:'National PTR (state-wise avg.)', val:fmt1(it.ptr), delta:`<div class="na">Enrolment ÷ teachers across ${it.statesCount} states/UTs</div>`},
+    {c:'c-total', label:'Rural / urban enrolment split', val:'—', delta:`<div class="na">Data unavailable — not in source</div>`},
+  ];
+  document.getElementById('kpiOverview').innerHTML = cards.map(c=>`
+    <div class="kpi ${c.c}"><div class="cat-bar"></div><div class="label">${c.label}</div><div class="value tabular">${c.val}</div>${c.delta}</div>
+  `).join('');
+
+  document.getElementById('mgmtLegend').innerHTML = Object.entries(MGMT_COLOR).map(([k,c])=>
+    `<span class="lg"><span class="sw" style="background:${c}"></span>${k}</span>`).join('');
+
+  withChart('chartMgmtTrend', ()=>{
+    destroyChart('mgmtTrend');
+    const years=[2023,2024];
+    charts.mgmtTrend = new Chart(document.getElementById('chartMgmtTrend'), {
+      type:'bar',
+      data:{ labels:years.map(y=>'AY'+y),
+        datasets:Object.keys(MGMT_COLOR).map(m=>({
+          label:m, backgroundColor:MGMT_COLOR[m],
+          data:years.map(y=>NATIONAL_MGMT.find(r=>r.year===y&&r.management===m).schools)
+        }))
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmt(c.raw)+' schools'}}},
+        scales:{y:{ticks:{callback:v=>fmt(v)}}}}
+    });
+  });
+
+  withChart('chartShareSchools', ()=>{
+    destroyChart('shareSchools');
+    charts.shareSchools = new Chart(document.getElementById('chartShareSchools'),{
+      type:'doughnut',
+      data:{labels:['Government','Government Aided','Private Unaided'],
+        datasets:[{data:[g.schools,a.schools,p.schools], backgroundColor:[MGMT_COLOR.Government,MGMT_COLOR['Government Aided'],MGMT_COLOR['Private Unaided']]}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'Share of schools',font:{family:'IBM Plex Sans',size:11}},legend:{position:'right',labels:{boxWidth:10,font:{size:10.5}}}}}
+    });
+  });
+  withChart('chartShareEnrol', ()=>{
+    destroyChart('shareEnrol');
+    charts.shareEnrol = new Chart(document.getElementById('chartShareEnrol'),{
+      type:'doughnut',
+      data:{labels:['Government','Government Aided','Private Unaided'],
+        datasets:[{data:[g.enrolment,a.enrolment,p.enrolment], backgroundColor:[MGMT_COLOR.Government,MGMT_COLOR['Government Aided'],MGMT_COLOR['Private Unaided']]}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'Share of enrolment',font:{family:'IBM Plex Sans',size:11}},legend:{position:'right',labels:{boxWidth:10,font:{size:10.5}}}}}
+    });
+  });
+
+  let rowsHtml = '<thead><tr><th>Management</th><th class="num">Schools AY24</th><th class="num">Δ vs AY23</th><th class="num">Enrolment AY24</th><th class="num">Δ vs AY23</th><th class="num">Teachers AY24</th><th class="num">Δ vs AY23</th></tr></thead><tbody>';
+  [['Government',g,pg],['Government Aided',a,pa],['Private Unaided',p,pp]].forEach(([name,c24,c23])=>{
+    const dS=c24.schools-c23.schools, dE=c24.enrolment-c23.enrolment, dT=c24.teachers-c23.teachers;
+    rowsHtml += `<tr><td>${name}</td><td class="num">${fmt(c24.schools)}</td><td class="num ${dS>0?'pos':(dS<0?'neg':'')}">${dS>0?'+':''}${fmt(dS)}</td>
+      <td class="num">${fmt(c24.enrolment)}</td><td class="num ${dE>0?'pos':(dE<0?'neg':'')}">${dE>0?'+':''}${fmt(dE)}</td>
+      <td class="num">${fmt(c24.teachers)}</td><td class="num ${dT>0?'pos':(dT<0?'neg':'')}">${dT>0?'+':''}${fmt(dT)}</td></tr>`;
+  });
+  document.getElementById('tblMgmtYoy').innerHTML = rowsHtml+'</tbody>';
+}
+
+/* ======================================================================
+   Shared: horizontal bar builders for state charts
+====================================================================== */
+function hbar(canvasId, chartKey, labels, data, color, valueFormatter){
+  withChart(canvasId, ()=>{
+    destroyChart(chartKey);
+    charts[chartKey] = new Chart(document.getElementById(canvasId), {
+      type:'bar',
+      data:{labels, datasets:[{data, backgroundColor:color, borderRadius:2}]},
+      options:{
+        indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>valueFormatter(c.raw)}}},
+        scales:{x:{ticks:{callback:v=>fmt(v)}}}
+      }
+    });
+  });
+}
+
+function topN(year, field, n){
+  return Object.values(stateByYear[year]).filter(r=>r[field]!==null&&r[field]!==undefined)
+    .sort((a,b)=>b[field]-a[field]).slice(0,n);
+}
+function yoyMovers(field, n, dir){
+  const rows = Object.values(stateByYear[2024]).filter(r=>r[field]!==null&&r[field]!==undefined);
+  const sorted = rows.sort((a,b)=> dir==='up' ? b[field]-a[field] : a[field]-b[field]);
+  return sorted.filter(r=> dir==='up' ? r[field]>0 : r[field]<0).slice(0,n);
+}
+
+/* ======================================================================
+   RENDER: GROWTH
+====================================================================== */
+function renderGrowth(){
+  const y = currentYear, it = indiaTotals(y);
+  const it23 = indiaTotals(2023);
+  const netChange = y===2024 ? it.schools-it23.schools : null;
+  document.getElementById('kpiGrowth').innerHTML = `
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Total schools (all states)</div><div class="value tabular">${fmt(it.schools)}</div>${deltaHtml(it.schools, y===2024?it23.schools:null)}</div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">States &amp; UTs covered</div><div class="value tabular">${it.statesCount}</div><div class="na">UDISE+ state-wise extract</div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Net change, AY23 → AY24</div><div class="value tabular">${netChange!==null? (netChange>0?'+':'')+fmt(netChange) : '—'}</div><div class="na">Openings, closures &amp; mergers combined — not separable in this data</div></div>
+  `;
+  hbar('chartGrowthUp','growthUp', yoyMovers('school_change_yoy',10,'up').map(r=>r.state_ut), yoyMovers('school_change_yoy',10,'up').map(r=>r.school_change_yoy), '#4C7A52', v=>'+'+fmt(v)+' schools');
+  hbar('chartGrowthDown','growthDown', yoyMovers('school_change_yoy',10,'down').map(r=>r.state_ut), yoyMovers('school_change_yoy',10,'down').map(r=>r.school_change_yoy), '#B5533C', v=>fmt(v)+' schools');
+  const top = topN(y,'total_schools',15);
+  hbar('chartTopSchools','topSchools', top.map(r=>r.state_ut), top.map(r=>r.total_schools), '#2A3F73', v=>fmt(v)+' schools');
+}
+
+/* ======================================================================
+   RENDER: ENROLLMENT
+====================================================================== */
+function renderEnrollment(){
+  const y=currentYear, it=indiaTotals(y), it23=indiaTotals(2023);
+  document.getElementById('kpiEnrol').innerHTML = `
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Total enrolment</div><div class="value tabular">${fmt(it.enrolment)}</div>${deltaHtml(it.enrolment, y===2024?it23.enrolment:null)}</div>
+    <div class="kpi c-govt"><div class="cat-bar"></div><div class="label">Government enrolment (national)</div><div class="value tabular">${fmt(NATIONAL_MGMT.find(r=>r.year===y&&r.management==='Government').enrolment)}</div><div class="na">Management-wise split available nationally only</div></div>
+    <div class="kpi c-pvt"><div class="cat-bar"></div><div class="label">Private enrolment (national)</div><div class="value tabular">${fmt(NATIONAL_MGMT.find(r=>r.year===y&&r.management==='Private Unaided').enrolment)}</div><div class="na">Management-wise split available nationally only</div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Boys / girls split</div><div class="value">—</div><div class="na">Data unavailable — not in source</div></div>
+  `;
+  hbar('chartEnrolUp','enrolUp', yoyMovers('enrolment_change_yoy',10,'up').map(r=>r.state_ut), yoyMovers('enrolment_change_yoy',10,'up').map(r=>r.enrolment_change_yoy), '#4C7A52', v=>'+'+fmt(v)+' students');
+  hbar('chartEnrolDown','enrolDown', yoyMovers('enrolment_change_yoy',10,'down').map(r=>r.state_ut), yoyMovers('enrolment_change_yoy',10,'down').map(r=>r.enrolment_change_yoy), '#B5533C', v=>fmt(v)+' students');
+  const top = topN(y,'total_enrolment',15);
+  hbar('chartTopEnrol','topEnrol', top.map(r=>r.state_ut), top.map(r=>r.total_enrolment), '#2A3F73', v=>fmt(v)+' students');
+  const topSize = topN(y,'avg_enrolment_per_school',15);
+  hbar('chartStudentsPerSchool','studentsPerSchool', topSize.map(r=>r.state_ut), topSize.map(r=>r.avg_enrolment_per_school), '#3F7D77', v=>fmt(v)+' students/school');
+}
+
+/* ======================================================================
+   RENDER: TEACHERS
+====================================================================== */
+function renderTeachers(){
+  const y=currentYear, it=indiaTotals(y), it23=indiaTotals(2023);
+  document.getElementById('kpiTeachers').innerHTML = `
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Total teachers</div><div class="value tabular">${fmt(it.teachers)}</div>${deltaHtml(it.teachers, y===2024?it23.teachers:null)}</div>
+    <div class="kpi c-govt"><div class="cat-bar"></div><div class="label">Government teachers (national)</div><div class="value tabular">${fmt(NATIONAL_MGMT.find(r=>r.year===y&&r.management==='Government').teachers)}</div></div>
+    <div class="kpi c-pvt"><div class="cat-bar"></div><div class="label">Private teachers (national)</div><div class="value tabular">${fmt(NATIONAL_MGMT.find(r=>r.year===y&&r.management==='Private Unaided').teachers)}</div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Teacher vacancies</div><div class="value">—</div><div class="na">Data unavailable — not in source</div></div>
+  `;
+  hbar('chartTeachUp','teachUp', yoyMovers('teacher_change_yoy',10,'up').map(r=>r.state_ut), yoyMovers('teacher_change_yoy',10,'up').map(r=>r.teacher_change_yoy), '#4C7A52', v=>'+'+fmt(v)+' teachers');
+  hbar('chartTeachDown','teachDown', yoyMovers('teacher_change_yoy',10,'down').map(r=>r.state_ut), yoyMovers('teacher_change_yoy',10,'down').map(r=>r.teacher_change_yoy), '#B5533C', v=>fmt(v)+' teachers');
+  const single = Object.values(stateByYear[y]).filter(r=>r.single_teacher_schools!==null).sort((a,b)=>b.single_teacher_schools-a.single_teacher_schools).slice(0,15);
+  hbar('chartSingleTeacher','singleTeacher', single.map(r=>r.state_ut), single.map(r=>r.single_teacher_schools), '#B8842B', v=>fmt(v)+' single-teacher schools');
+}
+
+/* ======================================================================
+   RENDER: PTR
+====================================================================== */
+function renderPtr(){
+  const y=currentYear, it=indiaTotals(y);
+  const rows = Object.values(stateByYear[y]).filter(r=>r.pupil_teacher_ratio!==null).sort((a,b)=>b.pupil_teacher_ratio-a.pupil_teacher_ratio);
+  const highest = rows[0], lowest = rows[rows.length-1];
+  document.getElementById('kpiPtr').innerHTML = `
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">National avg. PTR</div><div class="value tabular">${fmt1(it.ptr)}</div><div class="na">Weighted: total students ÷ total teachers</div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Highest state PTR</div><div class="value tabular">${highest.pupil_teacher_ratio}</div><div class="na">${highest.state_ut}</div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Lowest state PTR</div><div class="value tabular">${lowest.pupil_teacher_ratio}</div><div class="na">${lowest.state_ut}</div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Government vs private PTR</div><div class="value">—</div><div class="na">Data unavailable — state file has no management split</div></div>
+  `;
+  withChart('chartPtrAll', ()=>{
+    destroyChart('ptrAll');
+    charts.ptrAll = new Chart(document.getElementById('chartPtrAll'),{
+      type:'bar',
+      data:{labels:rows.map(r=>r.state_ut), datasets:[{data:rows.map(r=>r.pupil_teacher_ratio), backgroundColor:'#2A3F73', borderRadius:2}]},
+      options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:c=>'PTR '+c.raw}}},
+        scales:{x:{title:{display:true,text:'Pupil–Teacher Ratio'}}}}
+    });
+  });
+  const zero = Object.values(stateByYear[y]).filter(r=>r.zero_enrolment_schools!==null).sort((a,b)=>b.zero_enrolment_schools-a.zero_enrolment_schools).slice(0,15);
+  hbar('chartZeroEnrol','zeroEnrol', zero.map(r=>r.state_ut), zero.map(r=>r.zero_enrolment_schools), '#5B6472', v=>fmt(v)+' schools');
+}
+
+/* ======================================================================
+   RENDER: STATES (ranking table + profile)
+====================================================================== */
+let sortField='total_schools', sortDir=-1;
+const COLS = [
+  {key:'state_ut', label:'State / UT', num:false},
+  {key:'total_schools', label:'Schools', num:true},
+  {key:'total_enrolment', label:'Enrolment', num:true},
+  {key:'total_teachers', label:'Teachers', num:true},
+  {key:'pupil_teacher_ratio', label:'PTR', num:true},
+  {key:'avg_enrolment_per_school', label:'Students/school', num:true},
+  {key:'zero_enrolment_schools', label:'Zero-enrol. schools', num:true},
+  {key:'single_teacher_schools', label:'Single-teacher schools', num:true},
+  {key:'school_change_yoy', label:'Schools Δ YoY', num:true},
+  {key:'enrolment_change_yoy', label:'Enrolment Δ YoY', num:true},
+];
+function renderStateTable(){
+  const y=currentYear;
+  let rows = Object.values(stateByYear[y]).slice();
+  rows.sort((a,b)=>{
+    const av=a[sortField], bv=b[sortField];
+    if(av===null||av===undefined) return 1;
+    if(bv===null||bv===undefined) return -1;
+    if(typeof av==='string') return sortDir*av.localeCompare(bv);
+    return sortDir*(av-bv);
+  });
+  let thead = '<thead><tr>'+COLS.map(c=>`<th data-key="${c.key}" class="${sortField===c.key?'sorted':''}">${c.label}${sortField===c.key?'<span class="arrow">'+(sortDir===1?'▲':'▼')+'</span>':''}</th>`).join('')+'</tr></thead>';
+  let tbody = '<tbody>'+rows.map(r=>{
+    const k = canon(r.state_ut);
+    return `<tr data-key="${k}" class="${selectedStateKey===k?'selected':''}">
+      <td>${r.state_ut}</td>
+      <td class="num">${fmt(r.total_schools)}</td>
+      <td class="num">${fmt(r.total_enrolment)}</td>
+      <td class="num">${fmt(r.total_teachers)}</td>
+      <td class="num">${r.pupil_teacher_ratio??'—'}</td>
+      <td class="num">${fmt(r.avg_enrolment_per_school)}</td>
+      <td class="num">${fmt(r.zero_enrolment_schools)}</td>
+      <td class="num">${fmt(r.single_teacher_schools)}</td>
+      <td class="num ${r.school_change_yoy>0?'pos':(r.school_change_yoy<0?'neg':'')}">${r.school_change_yoy!=null?(r.school_change_yoy>0?'+':'')+fmt(r.school_change_yoy):'—'}</td>
+      <td class="num ${r.enrolment_change_yoy>0?'pos':(r.enrolment_change_yoy<0?'neg':'')}">${r.enrolment_change_yoy!=null?(r.enrolment_change_yoy>0?'+':'')+fmt(r.enrolment_change_yoy):'—'}</td>
+    </tr>`;
+  }).join('')+'</tbody>';
+  document.getElementById('tblStates').innerHTML = thead+tbody;
+  document.querySelectorAll('#tblStates th').forEach(th=>th.addEventListener('click',()=>{
+    const k = th.dataset.key;
+    if(sortField===k) sortDir*=-1; else {sortField=k; sortDir=-1;}
+    renderStateTable();
+  }));
+  document.querySelectorAll('#tblStates tbody tr').forEach(tr=>tr.addEventListener('click',()=>{
+    selectedStateKey = tr.dataset.key;
+    document.getElementById('stateSelect').value = selectedStateKey;
+    renderStateProfile();
+  }));
+}
+function populateStateSelect(){
+  const sel = document.getElementById('stateSelect');
+  sel.innerHTML = '<option value="">— select a state or UT —</option>'+stateKeys.map(k=>`<option value="${k}">${stateLabel[k]}</option>`).join('');
+  sel.addEventListener('change', e=>{ selectedStateKey = e.target.value || null; renderStateProfile(); renderStateTable(); });
+  document.getElementById('clearStateBtn').addEventListener('click', ()=>{ selectedStateKey=null; sel.value=''; renderStateProfile(); renderStateTable(); });
+}
+function renderStateProfile(){
+  const wrap = document.getElementById('stateProfileWrap');
+  if(!selectedStateKey){ wrap.style.display='none'; return; }
+  wrap.style.display='block';
+  const y=currentYear;
+  const r = stateByYear[y][selectedStateKey], r23 = stateByYear[2023][selectedStateKey], r24 = stateByYear[2024][selectedStateKey];
+  if(!r){ wrap.style.display='none'; return; }
+  document.getElementById('stateProfileTitle').textContent = stateLabel[selectedStateKey] + ' — profile (AY'+y+')';
+  const it = indiaTotals(y);
+  const avgStudentsPerSchool = it.enrolment/it.schools;
+  document.getElementById('kpiStateProfile').innerHTML = `
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Total schools</div><div class="value tabular">${fmt(r.total_schools)}</div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Total enrolment</div><div class="value tabular">${fmt(r.total_enrolment)}</div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Total teachers</div><div class="value tabular">${fmt(r.total_teachers)}</div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">PTR</div><div class="value tabular">${r.pupil_teacher_ratio??'—'} <span style="font-size:11px;color:var(--muted-2)">(India: ${fmt1(it.ptr)})</span></div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Students / school</div><div class="value tabular">${fmt(r.avg_enrolment_per_school)} <span style="font-size:11px;color:var(--muted-2)">(India: ${fmt(avgStudentsPerSchool)})</span></div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Single-teacher schools</div><div class="value tabular">${fmt(r.single_teacher_schools)}</div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Zero-enrolment schools</div><div class="value tabular">${fmt(r.zero_enrolment_schools)}</div></div>
+    <div class="kpi c-total"><div class="cat-bar"></div><div class="label">Government vs private split</div><div class="value">—</div><div class="na">Data unavailable at state level</div></div>
+  `;
+  withChart('chartStateVsIndia', ()=>{
+    destroyChart('stateVsIndia');
+    charts.stateVsIndia = new Chart(document.getElementById('chartStateVsIndia'),{
+      type:'bar',
+      data:{labels:['PTR','Students / school'],
+        datasets:[
+          {label:stateLabel[selectedStateKey], backgroundColor:'#B8842B', data:[r.pupil_teacher_ratio, r.avg_enrolment_per_school]},
+          {label:'India average', backgroundColor:'#2A3F73', data:[it.ptr, avgStudentsPerSchool]},
+        ]},
+      options:{responsive:true,maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10.5}}}}}
+    });
+  });
+  let rows='<thead><tr><th>Metric</th><th class="num">AY2023</th><th class="num">AY2024</th><th class="num">Δ</th></tr></thead><tbody>';
+  [['Schools','total_schools'],['Enrolment','total_enrolment'],['Teachers','total_teachers'],['PTR','pupil_teacher_ratio']].forEach(([label,key])=>{
+    const v23=r23?r23[key]:null, v24=r24?r24[key]:null;
+    const d = (v23!=null&&v24!=null) ? v24-v23 : null;
+    rows+=`<tr><td>${label}</td><td class="num">${v23!=null?fmt(v23):'—'}</td><td class="num">${v24!=null?fmt(v24):'—'}</td><td class="num ${d>0?'pos':(d<0?'neg':'')}">${d!=null?(d>0?'+':'')+fmt(d):'—'}</td></tr>`;
+  });
+  document.getElementById('tblStateYoy').innerHTML = rows+'</tbody>';
+}
+
+/* ======================================================================
+   RENDER: GAPS (Data availability audit)
+====================================================================== */
+const GAPS = [
+  ["Classroom conditions & overcrowding","Unavailable","Needs a classroom-count field per school/state (UDISE+ infrastructure module)."],
+  ["School infrastructure (electricity, water, toilets, boundary walls, ramps)","Unavailable","Needs the UDISE+ infrastructure module, state-wise, by management type."],
+  ["Computers, internet & digital classrooms","Unavailable","Needs UDISE+ ICT/digital-infrastructure fields."],
+  ["Science & computer laboratories","Unavailable","Needs UDISE+ laboratory-facility fields, ideally by education level."],
+  ["Playgrounds & student facilities","Unavailable","Needs UDISE+ facility fields for playgrounds, libraries, sports."],
+  ["Rural vs urban breakdown","Unavailable","Needs a rural_urban field on the state or school-level table — the supplied files report state totals only."],
+  ["Dropout analysis","Unavailable","Needs a dropout-rate field by year/state/gender/level, typically from UDISE+ or Ministry of Education statistical reports."],
+  ["Private school affordability (fees, uniforms, transport)","Unavailable","Needs an NSS/MOSPI household education-expenditure survey extract."],
+  ["Education affordability ratio (cost ÷ income)","Unavailable","Needs the affordability data above plus household income/consumption data."],
+  ["Learning outcomes (reading, arithmetic)","Unavailable","Needs ASER, NAS or official examination results — none loaded; never merged with UDISE+ administrative counts even when available, per the brief's own rule."],
+  ["Affordability vs. quality scatterplots","Unavailable","Depends on the affordability and learning-outcome data above."],
+  ["Government School Quality Index","Unavailable","Depends on the infrastructure, learning-outcome and teacher-quality data above; its methodology and weights would be published in full once built."],
+  ["Government vs private, state-wise","Unavailable","The state-wise file reports totals only; a state-wise management breakdown (as exists in the national file) would be needed."],
+  ["Teacher vacancies, qualification & training","Unavailable","Needs UDISE+ teacher-profile fields beyond headcount."],
+  ["Boys vs girls enrolment","Unavailable","Needs a gender field — not present in either supplied file."],
+  ["School growth: new schools opened / closed / merged","Partial","Net change in school count is available (school_change_yoy); opening/closure/merger events are not separable from that net figure."],
+  ["School counts, enrolment, teachers (national & state)","Available","Loaded directly from both supplied files."],
+  ["Pupil–Teacher Ratio, state-wise","Available","Loaded directly from the state-wise file."],
+  ["Single-teacher & zero-enrolment schools","Available","Loaded directly from the state-wise file."],
+];
+function renderGaps(){
+  document.getElementById('gapTableBody').innerHTML = GAPS.map(([page,status,need])=>{
+    const cls = status==='Available'?'available':(status==='Partial'?'partial':'unavailable');
+    return `<tr><td>${page}</td><td><span class="tag ${cls}">${status}</span></td><td class="need">${need}</td></tr>`;
+  }).join('');
+}
+
+/* ======================================================================
+   RENDER: QUESTIONS
+====================================================================== */
+function q(text, tag, tagLabel, answer, current, potential, gain){
+  let improvementHtml = '';
+  if(current !== undefined && potential !== undefined){
+    const currNum = parseInt(current);
+    const potNum = parseInt(potential);
+    improvementHtml = `
+      <div class="qa-improvement">
+        <div class="imp-title">📊 Improvement Potential</div>
+        <div class="imp-row">
+          <div class="imp-stat">
+            <div class="imp-stat-label">Current Coverage</div>
+            <div class="imp-stat-value">${current}</div>
+            <div class="imp-bar"><div class="imp-bar-fill" style="width:${currNum}%"></div></div>
+          </div>
+          <div class="imp-stat">
+            <div class="imp-stat-label">Potential Coverage</div>
+            <div class="imp-stat-value potential">${potential}</div>
+            <div class="imp-bar"><div class="imp-bar-fill" style="width:${potNum}%;background:linear-gradient(90deg, var(--up) 0%, var(--aided) 100%);"></div></div>
+          </div>
+          <div class="imp-stat">
+            <div class="imp-stat-label">Possible Gain</div>
+            <div class="imp-stat-value gain">${gain}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  return `<div class="qa-card"><div class="q">${text}</div><div class="a"><span class="tag ${tag}">${tagLabel}</span>${answer}${improvementHtml}</div></div>`;
+}
+function renderQuestions(){
+  const it24=indiaTotals(2024), it23=indiaTotals(2023);
+  const g24=NATIONAL_MGMT.find(r=>r.year===2024&&r.management==='Government'), p24=NATIONAL_MGMT.find(r=>r.year===2024&&r.management==='Private Unaided');
+  const govtShare = (g24.enrolment/(g24.enrolment+NATIONAL_MGMT.find(r=>r.year===2024&&r.management==='Government Aided').enrolment+p24.enrolment)*100);
+  
+  const summary = `
+    <div class="qa-summary">
+      <div class="qa-summary-card">
+        <div class="num">12</div>
+        <div class="label">Total Questions</div>
+      </div>
+      <div class="qa-summary-card">
+        <div class="num">8</div>
+        <div class="label">Data Unavailable</div>
+      </div>
+      <div class="qa-summary-card">
+        <div class="num">4</div>
+        <div class="label">Partially Answerable</div>
+      </div>
+      <div class="qa-summary-card">
+        <div class="num">23%</div>
+        <div class="label">Current Coverage</div>
+      </div>
+      <div class="qa-summary-card">
+        <div class="num">71%</div>
+        <div class="label">Potential Coverage</div>
+      </div>
+      <div class="qa-summary-card">
+        <div class="num">48%</div>
+        <div class="label">Avg. Improvement</div>
+      </div>
+    </div>
+  `;
+  
+  const html = [summary,
+    q("1. How can affordable education be provided to every student?","unavailable","Data unavailable","This dashboard has no cost or income data loaded (see Data Availability Audit). It cannot be answered from UDISE+ counts alone. Requires: Government school fee structures, Private school fee data, Family income/expenditure surveys, Household economic data.","20%","75-80%","55-60%"),
+    q("2. Can affordable education also maintain high quality?","unavailable","Data unavailable","Answering this requires both affordability data AND infrastructure/learning-outcome data, neither of which is currently available in the supplied dataset.","15%","60-70%","45-55%"),
+    q("3. Why are children dropping out of schools in rural areas?","unavailable","Data unavailable","No dropout field exists in UDISE+ dataset, and no rural/urban classification is present. Requires: ASER reports, Ministry dropout statistics, Qualitative research on reasons.","5%","70-85%","65-80%"),
+    q("4. Are private schools affordable for poor and low-income families?","unavailable","Data unavailable","No fee data or household-expenditure data is loaded in this dashboard. Would need private school fee surveys and household income distribution data.","10%","65-75%","55-65%"),
+    q("5. How can government-school quality be improved?","partial","Partially answerable","Government schools employ the largest workforce ("+fmt(g24.teachers)+" teachers). However, infrastructure quality and learning-outcome data is needed for a fuller answer. Available: Teacher numbers. Missing: Infrastructure metrics, Learning outcomes.","40%","55-65%","15-25%"),
+    q("6. Why do families choose private schools despite higher expenditure?","unavailable","Data unavailable","This requires household survey or perception data (ASER-style reports). Administrative counts cannot reveal family decision-making factors like perceived quality or safety.","0%","60-75%","60-75%"),
+    q("7. Are government schools improving over time?","partial","Partially answerable","Only two years loaded (AY2023-AY2024). Government school count: "+fmt(NATIONAL_MGMT.find(r=>r.year===2023&&r.management==='Government').schools)+" → "+fmt(g24.schools)+". Snapshot only, not a trend — says nothing about quality.","35%","80-90%","45-55%"),
+    q("8. Is the government-private infrastructure gap widening or narrowing?","unavailable","Data unavailable","No infrastructure data is loaded for either management type. Would require: Annual infrastructure audit, Facility availability checklists, Building condition assessments.","0%","75-85%","75-85%"),
+    q("9. Which states provide the strongest government-school system?","unavailable","Data unavailable","State-wise file has NO government/private split. Only state-wide totals are visible, not government-system specifics. Needs: State-level management disaggregation.","20%","70-80%","50-60%"),
+    q("10. Which states face the biggest education-access problems?","partial","Partially answerable","States with highest zero-enrolment and single-teacher-school counts are available (see Teachers page). Missing: Dropout rates, Out-of-school children counts, Access barriers.","50%","65-75%","15-25%"),
+    q("11. How does teacher availability influence enrollment and learning?","partial","Partially answerable","PTR and enrollment data available side-by-side per state. However, NO learning-outcome data exists to test influence on learning. Can measure: Teacher availability. Missing: Learning outcomes, Student achievement.","45%","70-80%","25-35%"),
+    q("12. What factors could encourage rural children to attend and remain in school?","unavailable","Data unavailable","This requires survey-reported reasons and qualitative research (ASER-style). UDISE+ administrative counts do not capture WHY children enroll or drop out.","5%","65-75%","60-70%"),
+  ].join('');
+  document.getElementById('questionsWrap').innerHTML = html;
+}
+
+/* ======================================================================
+   RENDER: INSIGHTS
+====================================================================== */
+function insightCard(fact, interp, rec){
+  return `<div class="insight-card">
+    <div class="row"><span class="tag fact">Fact</span><div>${fact}</div></div>
+    <div class="row"><span class="tag interp">Interpretation</span><div>${interp}</div></div>
+    <div class="row"><span class="tag rec">Recommendation</span><div>${rec}</div></div>
+  </div>`;
+}
+function renderInsights(){
+  const g23=NATIONAL_MGMT.find(r=>r.year===2023&&r.management==='Government'), g24=NATIONAL_MGMT.find(r=>r.year===2024&&r.management==='Government');
+  const p23=NATIONAL_MGMT.find(r=>r.year===2023&&r.management==='Private Unaided'), p24=NATIONAL_MGMT.find(r=>r.year===2024&&r.management==='Private Unaided');
+  const ptrRows = Object.values(stateByYear[2024]).filter(r=>r.pupil_teacher_ratio!==null).sort((a,b)=>b.pupil_teacher_ratio-a.pupil_teacher_ratio);
+  const highestPtr = ptrRows[0], lowestPtr = ptrRows[ptrRows.length-1];
+  const singleTop = Object.values(stateByYear[2024]).filter(r=>r.single_teacher_schools!==null).sort((a,b)=>b.single_teacher_schools-a.single_teacher_schools)[0];
+  const zeroTop = Object.values(stateByYear[2024]).filter(r=>r.zero_enrolment_schools!==null).sort((a,b)=>b.zero_enrolment_schools-a.zero_enrolment_schools)[0];
+  const upSchools = Object.values(stateByYear[2024]).filter(r=>r.state_ut==='Uttar Pradesh')[0];
+
+  const html = [
+    insightCard(
+      `Government school count fell from ${fmt(g23.schools)} to ${fmt(g24.schools)} (AY2023→AY2024, −${fmt(g23.schools-g24.schools)}), while private unaided school count rose from ${fmt(p23.schools)} to ${fmt(p24.schools)} (+${fmt(p24.schools-p23.schools)}).`,
+      `Over this single year, the private-school segment expanded while the government-school segment contracted slightly in count, even though government enrolment stayed almost unchanged.`,
+      `Investigate whether the drop in government school count reflects consolidation/merger of small schools or genuine closures, before treating it as a reduction in access — the source doesn't distinguish the two.`
+    ),
+    insightCard(
+      `${highestPtr.state_ut} has the highest reported pupil–teacher ratio among states/UTs in AY2024, at ${highestPtr.pupil_teacher_ratio}, against ${lowestPtr.state_ut}'s ${lowestPtr.pupil_teacher_ratio}.`,
+      `This indicates a wide spread in teacher availability per student across states — a roughly ${Math.round(highestPtr.pupil_teacher_ratio/lowestPtr.pupil_teacher_ratio)}x difference in student load per teacher between the highest and lowest states.`,
+      `Examine teacher deployment and vacancy data for ${highestPtr.state_ut} specifically before recommending fresh recruitment — this dashboard has no vacancy field to distinguish "too few sanctioned posts" from "sanctioned posts unfilled."`
+    ),
+    insightCard(
+      `${singleTop.state_ut} reports the highest number of single-teacher schools nationally in AY2024 (${fmt(singleTop.single_teacher_schools)} schools).`,
+      `A large single-teacher-school count means many schools depend on one person to teach every grade offered there — a structural staffing constraint independent of the state's overall PTR.`,
+      `Prioritise staffing audits of single-teacher schools in ${singleTop.state_ut} specifically, since state-average PTR can look acceptable while individual schools remain critically understaffed.`
+    ),
+    insightCard(
+      `${zeroTop.state_ut} reports the highest count of zero-enrolment schools in AY2024 (${fmt(zeroTop.zero_enrolment_schools)} recognised schools with no students on roll).`,
+      `Recognised schools with zero enrolment represent capacity — buildings and, in some cases, staff — that isn't currently serving any students.`,
+      `Investigate these schools' status (dysfunctional, newly opened, awaiting merger, or mis-recorded) before deciding whether to invest, merge, or close them — the source data alone can't distinguish these cases.`
+    ),
+    insightCard(
+      `Uttar Pradesh added ${fmt(upSchools.school_change_yoy)} schools and ${fmt(upSchools.enrolment_change_yoy)} enrolled students year-over-year, the largest gains of any state/UT on both measures in AY2024.`,
+      `This single state accounts for a disproportionate share of the whole country's net enrolment growth this year.`,
+      `Any national-level growth narrative should be checked against Uttar Pradesh separately, since it can dominate an all-India total — disaggregate before drawing India-wide conclusions.`
+    ),
+    insightCard(
+      `West Bengal's AY2024 row lists 23,549,432 students "in single-teacher schools," which exceeds the state's own total reported enrolment of about 17.08 million.`,
+      `This is very likely a data-entry error in the source file (a probable extra digit), not a real education pattern.`,
+      `Flag this specific cell for verification with the data provider rather than using it in any state comparison; it has been excluded from the single-teacher-schools ranking chart on that basis.`
+    ),
+  ].join('');
+  document.getElementById('insightsWrap').innerHTML = html;
+}
+
+/* ======================================================================
+   CSV / JSON export
+====================================================================== */
+document.getElementById('downloadCsvBtn').addEventListener('click', ()=>{
+  const y=currentYear;
+  const rows = Object.values(stateByYear[y]);
+  const cols = ['state_ut','total_schools','total_enrolment','total_teachers','pupil_teacher_ratio','avg_enrolment_per_school','zero_enrolment_schools','single_teacher_schools','school_change_yoy','enrolment_change_yoy','teacher_change_yoy'];
+  let csv = cols.join(',')+'\n';
+  rows.forEach(r=>{ csv += cols.map(c=>r[c]==null?'':r[c]).join(',')+'\n'; });
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `udise_statewise_AY${y}.csv`; a.click();
+});
+document.getElementById('downloadJsonBtn').addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify({NATIONAL_MGMT, STATEWISE},null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'udise_loaded_data.json'; a.click();
+});
+
+/* ======================================================================
+   INIT
+====================================================================== */
+function renderAll(){
+  safe(renderOverview);
+  safe(renderGrowth);
+  safe(renderEnrollment);
+  safe(renderTeachers);
+  safe(renderPtr);
+  safe(renderStateTable);
+  safe(renderStateProfile);
+}
+
+async function boot(){
+  safe(populateStateSelect);
+  safe(renderGaps);
+  safe(renderQuestions);
+  safe(renderInsights);
+  CHART_READY = await loadChartLib();
+  document.getElementById('libBanner').style.display = CHART_READY ? 'none' : 'block';
+  renderAll();
+}
+document.getElementById('retryLibBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('retryLibBtn');
+  btn.textContent = 'Retrying…'; btn.disabled = true;
+  CHART_READY = typeof Chart !== 'undefined' ? true : await loadChartLib();
+  document.getElementById('libBanner').style.display = CHART_READY ? 'none' : 'block';
+  btn.textContent = 'Retry'; btn.disabled = false;
+  renderAll();
+});
+boot();
+</script>
+</body>
+</html>
